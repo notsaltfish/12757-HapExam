@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.hap.sale.mapper.HapOmOrderHeadersMapper" >
+  <resultMap id="BaseResultMap" type="com.hand.hap.sale.dto.HapOmOrderHeaders" >
+    <id column="HEADER_ID" property="headerId" jdbcType="BIGINT" />
+    <result column="ORDER_NUMBER" property="orderNumber" jdbcType="VARCHAR" />
+    <result column="COMPANY_ID" property="companyId" jdbcType="BIGINT" />
+    <result column="ORDER_DATE" property="orderDate" jdbcType="TIMESTAMP" />
+    <result column="ORDER_STATUS" property="orderStatus" jdbcType="VARCHAR" />
+    <result column="CUSTOMER_ID" property="customerId" jdbcType="BIGINT" />
+    <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+    <result column="REQUEST_ID" property="requestId" jdbcType="BIGINT" />
+    <result column="PROGRAM_ID" property="programId" jdbcType="BIGINT" />
+    <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
+    <result column="CREATED_BY" property="createdBy" jdbcType="DECIMAL" />
+    <result column="LAST_UPDATED_BY" property="lastUpdatedBy" jdbcType="DECIMAL" />
+    <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_LOGIN" property="lastUpdateLogin" jdbcType="DECIMAL" />
+    <result column="ATTRIBUTE_CATEGORY" property="attributeCategory" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE1" property="attribute1" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE2" property="attribute2" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE3" property="attribute3" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE4" property="attribute4" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE5" property="attribute5" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE6" property="attribute6" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE7" property="attribute7" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE8" property="attribute8" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE9" property="attribute9" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE10" property="attribute10" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE11" property="attribute11" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE12" property="attribute12" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE13" property="attribute13" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE14" property="attribute14" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE15" property="attribute15" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap type="com.hand.hap.sale.dto.SaleOrderInfoDTO" id="saleOrderInfoRM">
+  		<result column="header_id" property="headerId"/>
+  		<result column="order_number" property="orderNumber"/>
+  		<result column="company_name" property="companyName"/>
+  		<result column="customer_name" property="customerName"/>
+  		<result column="order_date" property="orderDate"/>
+  		<result column="order_status" property="orderStatus"/>
+  		<result column="total_money" property="totalMoney"/>
+  		<result column="orderd_quantity" property="orderQuantity"/>
+  		<result column="order_quantity_uom" property="orderQuantityUOM"/>
+  		<result column="unit_selling_price" property="unitSellingPrice"/>
+  		<result column="description" property="description"/>
+  		<result column="ITEM_DESCRIPTION" property="itemDescription"/>
+  		<result column="ITEM_CODE" property="itemCode"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    HEADER_ID, ORDER_NUMBER, COMPANY_ID, ORDER_DATE, ORDER_STATUS, CUSTOMER_ID, OBJECT_VERSION_NUMBER, 
+    REQUEST_ID, PROGRAM_ID, CREATION_DATE, CREATED_BY, LAST_UPDATED_BY, LAST_UPDATE_DATE, 
+    LAST_UPDATE_LOGIN, ATTRIBUTE_CATEGORY, ATTRIBUTE1, ATTRIBUTE2, ATTRIBUTE3, ATTRIBUTE4, 
+    ATTRIBUTE5, ATTRIBUTE6, ATTRIBUTE7, ATTRIBUTE8, ATTRIBUTE9, ATTRIBUTE10, ATTRIBUTE11, 
+    ATTRIBUTE12, ATTRIBUTE13, ATTRIBUTE14, ATTRIBUTE15
+  </sql>
+  
+  	<select id="selectOrderInfo" parameterType="com.hand.hap.sale.dto.SaleOrderInfoDTO" resultMap="saleOrderInfoRM">
+  		SELECT hooh.header_id,hooh.order_number,hoc.company_name,hac.customer_name,hooh.order_date,
+		hooh.order_status,hool.unit_selling_price,hool.description,hool.order_quantity_uom,hool.orderd_quantity,hool.unit_selling_price*hool.orderd_quantity AS total_money, 
+		hiii.ITEM_DESCRIPTION,hiii.ITEM_CODE
+		FROM hap_om_order_headers hooh
+		LEFT JOIN hap_om_order_lines hool ON hooh.header_id = hool.header_id
+		LEFT JOIN hap_org_companys hoc ON hooh.COMPANY_ID = hoc.company_id
+		LEFT JOIN hap_ar_customers hac ON hooh.customer_id = hac.customer_id
+		LEFT JOIN hap_inv_inventory_items hiii on hool.INVENTORY_ITEM_ID=hiii.INVENTORY_ITEM_ID
+  		where 1=1 
+  		<if test="companyId !=null"> and hooh.company_id=#{companyId}</if>
+  		<if test="customerId !=null"> and hooh.customer_id=#{customerId}</if>
+  		<if test="orderStatus !=null"> and hooh.order_status=#{orderStatus}</if>
+  		<if test="orderNumber !=null"> and hooh.order_number=#{orderNumber}</if>
+  		<if test="inventoryItemId !=null"> and hool.inventory_item_id=#{inventoryItemId}</if>
+  		<if test="headerId !=null"> and hooh.header_id=#{headerId}</if>
+  		
+  	</select>
+  
+</mapper>

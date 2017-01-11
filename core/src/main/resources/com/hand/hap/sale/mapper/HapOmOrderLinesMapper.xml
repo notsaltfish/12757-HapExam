@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hand.hap.sale.mapper.HapOmOrderLinesMapper" >
+  <resultMap id="BaseResultMap" type="com.hand.hap.sale.dto.HapOmOrderLines" >
+    <id column="LINE_ID" property="lineId" jdbcType="BIGINT" />
+    <result column="HEADER_ID" property="headerId" jdbcType="BIGINT" />
+    <result column="LINE_NUMBER" property="lineNumber" jdbcType="BIGINT" />
+    <result column="INVENTORY_ITEM_ID" property="inventoryItemId" jdbcType="BIGINT" />
+    <result column="ORDERD_QUANTITY" property="orderdQuantity" jdbcType="BIGINT" />
+    <result column="ORDER_QUANTITY_UOM" property="orderQuantityUom" jdbcType="VARCHAR" />
+    <result column="UNIT_SELLING_PRICE" property="unitSellingPrice" jdbcType="BIGINT" />
+    <result column="DESCRIPTION" property="description" jdbcType="VARCHAR" />
+    <result column="COMPANY_ID" property="companyId" jdbcType="BIGINT" />
+    <result column="ADDITION1" property="addition1" jdbcType="VARCHAR" />
+    <result column="ADDITION2" property="addition2" jdbcType="VARCHAR" />
+    <result column="ADDITION3" property="addition3" jdbcType="VARCHAR" />
+    <result column="ADDITION4" property="addition4" jdbcType="VARCHAR" />
+    <result column="ADDITION5" property="addition5" jdbcType="VARCHAR" />
+    <result column="OBJECT_VERSION_NUMBER" property="objectVersionNumber" jdbcType="DECIMAL" />
+    <result column="REQUEST_ID" property="requestId" jdbcType="BIGINT" />
+    <result column="PROGRAM_ID" property="programId" jdbcType="BIGINT" />
+    <result column="CREATION_DATE" property="creationDate" jdbcType="TIMESTAMP" />
+    <result column="CREATED_BY" property="createdBy" jdbcType="DECIMAL" />
+    <result column="LAST_UPDATED_BY" property="lastUpdatedBy" jdbcType="DECIMAL" />
+    <result column="LAST_UPDATE_DATE" property="lastUpdateDate" jdbcType="TIMESTAMP" />
+    <result column="LAST_UPDATE_LOGIN" property="lastUpdateLogin" jdbcType="DECIMAL" />
+    <result column="ATTRIBUTE_CATEGORY" property="attributeCategory" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE1" property="attribute1" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE2" property="attribute2" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE3" property="attribute3" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE4" property="attribute4" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE5" property="attribute5" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE6" property="attribute6" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE7" property="attribute7" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE8" property="attribute8" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE9" property="attribute9" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE10" property="attribute10" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE11" property="attribute11" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE12" property="attribute12" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE13" property="attribute13" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE14" property="attribute14" jdbcType="VARCHAR" />
+    <result column="ATTRIBUTE15" property="attribute15" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    LINE_ID, HEADER_ID, LINE_NUMBER, INVENTORY_ITEM_ID, ORDERD_QUANTITY, ORDER_QUANTITY_UOM, 
+    UNIT_SELLING_PRICE, DESCRIPTION, COMPANY_ID, ADDITION1, ADDITION2, ADDITION3, ADDITION4, 
+    ADDITION5, OBJECT_VERSION_NUMBER, REQUEST_ID, PROGRAM_ID, CREATION_DATE, CREATED_BY, 
+    LAST_UPDATED_BY, LAST_UPDATE_DATE, LAST_UPDATE_LOGIN, ATTRIBUTE_CATEGORY, ATTRIBUTE1, 
+    ATTRIBUTE2, ATTRIBUTE3, ATTRIBUTE4, ATTRIBUTE5, ATTRIBUTE6, ATTRIBUTE7, ATTRIBUTE8, 
+    ATTRIBUTE9, ATTRIBUTE10, ATTRIBUTE11, ATTRIBUTE12, ATTRIBUTE13, ATTRIBUTE14, ATTRIBUTE15
+  </sql>
+	<update id="updateByHeadersId" parameterType="com.hand.hap.sale.dto.HapOmOrderLines">
+			update hap_om_order_lines 
+			<set>
+				<if test=" orderdQuantity !=null"> ORDERD_QUANTITY=#{orderdQuantity},</if>
+				<if test=" orderQuantityUom !=null"> ORDER_QUANTITY_UOM=#{orderQuantityUom},</if>
+				<if test=" unitSellingPrice !=null"> UNIT_SELLING_PRICE=#{unitSellingPrice},</if>
+				<if test=" companyId !=null"> COMPANY_ID=#{companyId},</if>
+				<if test=" description !=null"> DESCRIPTION=#{description}</if>
+			</set>
+	 where header_id = #{headerId}
+	</update> 
+
+</mapper>
