@@ -3,15 +3,19 @@ package com.hand.hap.sale.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.hand.hap.mybatis.annotation.ExtensionAttribute;
+import com.hand.hap.system.dto.BaseDTO;
 
 @ExtensionAttribute(disable=true)
 @Table(name="hap_om_order_headers")
-public class HapOmOrderHeaders {
-	@Id
+public class HapOmOrderHeaders extends BaseDTO{
+	//@Id
+	//@GeneratedValue(generator = GENERATOR_TYPE)
     private Long headerId;
 
     private String orderNumber;
@@ -24,7 +28,7 @@ public class HapOmOrderHeaders {
 
     private Long customerId;
 
-    private BigDecimal objectVersionNumber;
+    private Long objectVersionNumber;
 
     private Long requestId;
 
@@ -32,13 +36,13 @@ public class HapOmOrderHeaders {
 
     private Date creationDate;
 
-    private BigDecimal createdBy;
+    private Long createdBy;
 
-    private BigDecimal lastUpdatedBy;
+    private Long lastUpdatedBy;
 
     private Date lastUpdateDate;
 
-    private BigDecimal lastUpdateLogin;
+    private Long lastUpdateLogin;
 
     private String attributeCategory;
 
@@ -120,11 +124,11 @@ public class HapOmOrderHeaders {
         this.customerId = customerId;
     }
 
-    public BigDecimal getObjectVersionNumber() {
+    public Long getObjectVersionNumber() {
         return objectVersionNumber;
     }
 
-    public void setObjectVersionNumber(BigDecimal objectVersionNumber) {
+    public void setObjectVersionNumber(Long objectVersionNumber) {
         this.objectVersionNumber = objectVersionNumber;
     }
 
@@ -152,19 +156,19 @@ public class HapOmOrderHeaders {
         this.creationDate = creationDate;
     }
 
-    public BigDecimal getCreatedBy() {
+    public Long getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(BigDecimal createdBy) {
+    public void setCreatedBy(Long createdBy) {
         this.createdBy = createdBy;
     }
 
-    public BigDecimal getLastUpdatedBy() {
+    public Long getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
-    public void setLastUpdatedBy(BigDecimal lastUpdatedBy) {
+    public void setLastUpdatedBy(Long lastUpdatedBy) {
         this.lastUpdatedBy = lastUpdatedBy;
     }
 
@@ -176,11 +180,11 @@ public class HapOmOrderHeaders {
         this.lastUpdateDate = lastUpdateDate;
     }
 
-    public BigDecimal getLastUpdateLogin() {
+    public Long getLastUpdateLogin() {
         return lastUpdateLogin;
     }
 
-    public void setLastUpdateLogin(BigDecimal lastUpdateLogin) {
+    public void setLastUpdateLogin(Long lastUpdateLogin) {
         this.lastUpdateLogin = lastUpdateLogin;
     }
 

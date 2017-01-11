@@ -3,7 +3,14 @@ package com.hand.hap.sale.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Table(name="hap_om_order_lines")
 public class HapOmOrderLines {
+	@Id
+	@GeneratedValue
     private Long lineId;
 
     private Long headerId;

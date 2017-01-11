@@ -2,7 +2,12 @@ package com.hand.hap.sale.dto;
 
 import java.util.Date;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
+
+@Table(name="hap_inv_inventory_items")
 public class HapInvInventoryItems {
+	@GeneratedValue
     private Long inventoryItemId;
 
     private String itemCode;

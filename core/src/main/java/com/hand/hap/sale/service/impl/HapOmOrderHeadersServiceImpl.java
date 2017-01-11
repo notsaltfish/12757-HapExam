@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.pagehelper.PageHelper;
+import com.hand.hap.core.IRequest;
 import com.hand.hap.sale.dto.HapOmOrderHeaders;
 import com.hand.hap.sale.dto.HapOmOrderLines;
 import com.hand.hap.sale.dto.SaleOrderInfoDTO;
@@ -53,6 +54,7 @@ public class HapOmOrderHeadersServiceImpl extends BaseServiceImpl<HapOmOrderHead
 		lines.setUnitSellingPrice(order.getUnitSellingPrice());
 		lines.setCompanyId(order.getCompanyId());
 		lines.setDescription(order.getDescription());
+		
 		lines.setInventoryItemId(order.getInventoryItemId());
 		return lines;
 	}
@@ -64,8 +66,25 @@ public class HapOmOrderHeadersServiceImpl extends BaseServiceImpl<HapOmOrderHead
 		headers.setCustomerId(order.getCustomerId());
 		headers.setOrderDate(order.getOrderDate());
 		headers.setOrderStatus(order.getOrderStatus());
+		headers.setOrderNumber(order.getOrderNumber());
 		
 		return headers;
+	}
+
+	@Override
+	public ResponseData insertBySaleOrderDTO(IRequest irequest, SaleOrderInfoDTO order) {
+		HapOmOrderHeaders headers = getHeaders(order);
+		HapOmOrderLines lines = getLines(order);
+		try{
+		this.insert(irequest, headers);
+		
+		hapOmOrderLineMapper.insertSelective(lines);
+		}catch(Exception e){
+			
+		}
+		ResponseData data = new ResponseData();
+		data.setSuccess(true);
+		return data;
 	}
 	
 	

@@ -78,4 +78,10 @@ public class HapOmOrderHeadersController extends BaseController{
         }
     }
 	
+	@RequestMapping(path="create")
+	public ResponseData create(HttpServletRequest request,@RequestBody SaleOrderInfoDTO order){
+		IRequest irequest  =this.createRequestContext(request);
+		return iHapOmOrderHeaders.insertBySaleOrderDTO(irequest, order);
+	}
+	
 }

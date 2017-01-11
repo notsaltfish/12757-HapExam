@@ -2,7 +2,14 @@ package com.hand.hap.sale.dto;
 
 import java.util.Date;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Table(name="hap_org_companys")
 public class HapOrgCompanys {
+	@Id
+	@GeneratedValue
     private Long companyId;
 
     private String companyNumber;

@@ -2,7 +2,10 @@ package com.hand.hap.sale.dto;
 
 import java.util.Date;
 
+import javax.persistence.Table;
 
+
+@Table(name="hap_ar_customers")
 public class HapArCustomers {
     private Long customerId;
 
