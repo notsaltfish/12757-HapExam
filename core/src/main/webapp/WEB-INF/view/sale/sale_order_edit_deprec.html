@@ -8,12 +8,13 @@
 <body>
 <script src="${base.contextPath}/common/code?yesno=SYS.YES_NO&lovTypes=SYS.LOV_EDITOR_TYPE&alignType=SYS.ALIGN_TYPE"
         type="text/javascript"></script>
-         <script src="${base.contextPath}/common/code?requestStatusdata=HAP_OM_ORDER_STATUS" type="text/javascript"></script>
-       
+ <script src="${base.contextPath}/common/code?requestStatusdata=HAP_OM_ORDER_STATUS" type="text/javascript"></script>
+        
 <script type="text/javascript">
+	
 
     var lovId =${RequestParameters.lovId!0};
-
+	
     // 转换大小写
     $.each(lovTypes, function (i, n) {
         n.value = n.value.toLowerCase();
@@ -21,7 +22,7 @@
     $.each(alignType, function (i, n) {
         n.value = n.value.toLowerCase();
     })
-    var crudServiceBaseUrl = '${base.contextPath}';
+    var crudServiceBaseUrl = '${base.contextPath}/orderheader';
     var viewModel2 = kendo.observable({
         selected: {},
         source: lovTypes,
@@ -93,21 +94,20 @@
         dataSource: new kendo.data.DataSource({
             transport: {
                 read: {
-                    url: crudServiceBaseUrl + "/orderheader/getorderinfo?headerId=${RequestParameters.headerId!0}",
-                    type: "POST"
+                    url: crudServiceBaseUrl + "/query"
                 },
                 create: {
-                    url: crudServiceBaseUrl + "/orderheader/create",
+                    url: crudServiceBaseUrl + "/submit",
                     contentType: "application/json",
                     type: "POST"
                 },
                 update: {
-                    url: crudServiceBaseUrl + "/orderheader/updateorderInfo",
+                    url: crudServiceBaseUrl + "/submit",
                     contentType: "application/json",
                     type: "POST"
                 },
                 destroy: {
-                    url: crudServiceBaseUrl + "/orderheader/delete",
+                    url: crudServiceBaseUrl + "/remove",
                     contentType: "application/json",
                     type: "POST"
                 },
@@ -117,7 +117,7 @@
                         return kendo.stringify(datas);
                     } else if (type === "read") {
                         var p = Hap.prepareQueryParameter(viewModel.model.toJSON(), options);
-                        //p.lovId = lovId;
+                        p.lovId = lovId;
                         return p;
                     }
                 }
@@ -171,7 +171,9 @@
         queryResource: function (e) {
             //  $('#grid').data('kendoGrid').dataSource.page(1);
         },
-        requestStatusData:requestStatusdata
+        requestStatusData:requestStatusdata,
+        
+        
         
     });
     
@@ -179,7 +181,7 @@
 
 <!-- 编辑界面 -->
 <form id="queryEdit" class="modal-content form-horizontal" role="form" autocomplete="off" style="display:none">
-    <div class="col-xs-offset-1" style="margin-top:10px">
+<!--     <div class="col-xs-offset-1" style="margin-top:10px">
                 <div class="form-group ">
                     <label class="col-xs-3 control-label"><@spring.message "lovitem.field_type"/></label>
                     <div class="col-xs-5">
@@ -269,22 +271,24 @@
                     </div>
                 </div>
     </div>
-    <div class="modal-footer">
+    <div class="modal-footer"> -->
         <span class="btn btn-primary" onclick="hideForm()">确定</span>
     </div>
 </form>
 <div id="dialog"></div>
 <div id="content-container">
     <div id="page-content">
-      <div class="panel" id="inQuery" style="padding: 0px;border:none;box-shadow: none;">
-                <form class="form-horizontal" id="myForm">
-                    <div class="panel-body">
-                        <div class="row" style="margin-bottom: 10px;">
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label"><@spring.message"company.companyshortname"/></label>
-                                    <div class="col-sm-8">
-                                        <input name="code" id="lovCompany"   style="width: 100%" data-bind="text:model.companyName,value:model.companyId"
+        <div class="panel" style="padding: 0px;">
+            <form class="form-horizontal" id="lovForm">
+                <input type="hidden" name="lovItems" id="lovItems" value=""/>
+                <input type="hidden" name="lovId"/>
+                <div class="panel-body">
+                <div class="col-sm-5">
+                  <div class="row">
+                     <div class="form-group required-input">
+                         <label class="col-sm-2 control-label"><@spring.message "company.companyshortname"/></label>
+                              <div class="col-sm-10">
+                                <input name="code" id="lovCompany"   style="width: 100%" data-bind="text:model.companyName,value:model.companyId"
                                        required>
                                 <script>
                                 kendo.bind($('#lovCompany'), viewModel);
@@ -300,131 +304,164 @@
 								     })); 
                                 
                                 </script>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                              <div class="form-group">
-                                <label class="col-sm-3 control-label"><@spring.message"customer.customername"/></label>
-                                <div class="col-sm-8">
-                              <input id="lovCustomer"  type="text" style="width: 100%" data-bind="text:model.customerName,value:model.customerId"
-                                          >           <script>                     
-													/* 	  $("#lovCustomer").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "LOV_SALE_CUSTOMER")}, 
-															    {
-															      query: function(e) { },
-															      select: function(e) { }
-															     }));   */
-															     
-															var cuatomerId=  $("#lovCustomer").kendoLov({
-															    	  //三个必要参数code、contextPath、locale
-															    	         code:"LOV_SALE_CUSTOMER",
-															    	         contextPath:'${base.contextPath}',
-															    	         locale:'${base.locale}',
-															    	         //其余参数可自行配置
-															    	         select:function(e) {
-															    	             //alert("select");
-															    	         },
-															    	         query:function(e){//这样用公司的lov联动customer的lov
-															    	        	 e.param['companyId'] = viewModel.model.companyId;
-															    	         }
-															    	     }); 
-															
-													</script>
-                                </div>
                               </div>
-                           </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label"><@spring.message "sale.orderstatus"/></label>
-                                    <div class="col-sm-8">
-                                 <select data-role="combobox" data-value-primitive="true"
-                                                data-text-field="meaning" data-value-field="value"
-                                                data-bind="source: requestStatusData,value:model.orderStatus" style="width: 100%;"></select>
-                                          </div>
-                                </div>
-                            </div>
+                     </div>
+                  </div>
+                  <div class="row">
+                      <div class="form-group">
+                           <label class="col-sm-2 control-label"><@spring.message "customer.customername"/></label>
+                               <div class="col-sm-10">
+                                   <input id="lovCustomer"  type="text" style="width: 100%" data-bind="text:model.customerName,value:model.customerId"
+                                          >
+                                   <script>      $("#lovCustomer").kendoLov({
+								    	  //三个必要参数code、contextPath、locale
+						    	         code:"LOV_SALE_CUSTOMER",
+						    	         contextPath:'${base.contextPath}',
+						    	         locale:'${base.locale}',
+						    	         //其余参数可自行配置
+						    	         select:function(e) {
+						    	             //alert("select");
+						    	         }
+						    	     }); 
+                                   kendo.bind($('#lovCustomer'), viewModel);</script>
+                               </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                        <div class="form-group">
+                              <label class="col-sm-2 control-label"><@spring.message "material.materialname"/></label>
+                              <div class="col-sm-10">
+                                   <input id="lovItem" data-role="maskedtextbox" type="text" style="width: 100%" data-bind="value:model.inventoryItemId"
+                                        >
+                                   <script>  $("#lovItem").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "LOV_SALE_INVENTORY_ITEMS")}, 
+										    {
+									      query: function(e) { },
+									      select: function(e) { }
+									     }));
+                                   kendo.bind($('#lovItem'), viewModel);</script>
+                              </div>
                         </div>
-                        <div class="row ">
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label"><@spring.message "material.materialname"/></label>
-                                    <div class="col-sm-8">
-                                       <input style="width: 100%" id="lovItem"   data-bind="value:model.inventoryItemId,text:itemDescription" class="k-input">
-                                     <script>                     
-															  $("#lovItem").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "LOV_SALE_INVENTORY_ITEMS")}, 
-															    {
-															      query: function(e) { },
-															      select: function(e) { }
-															     }));
-															kendo.bind($("#lovItem"),viewModel);
-													</script>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label"><@spring.message "sale.ordernumber"/></label>
-                                    <div class="col-sm-8">
-                                           <input style="width: 100%"    data-bind="value:model.orderNumber" class="k-textbox">  
-                
-                                                 </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">
-                            		<div class="form-group">
-                          <label class="col-sm-3 control-label"><@spring.message "sale.saledate"/></label>
-                          <div class="col-sm-8">
+                  </div>
+                   
+                  <div class="row">
+                      <div class="form-group">
+                          <label class="col-sm-2 control-label"><@spring.message "sale.saledate"/></label>
+                          <div class="col-sm-10">
                               <input id="placeholder" data-role="datepicker" type="text" style="width: 100%;" data-bind="value:model.orderDate">
                               <script>kendo.bind($('#placeholder'), viewModel);</script>
                           </div>
                       </div>
-                            
+                  </div>
+                  <div class="row">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label"><@spring.message "sale.product.price"/></label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="orderQuantityUOM" class="k-textbox" style="width: 100%;" data-bind="value:model.orderQuantityUOM">
+                                    <script>
+                                       kendo.bind($('#orderQuantityUOM'), viewModel);
+                                    </script>
+                                </div>
                             </div>
-                            
+                        
                         </div>
+    <!--               <div class="row">
+                      <div class="form-group col-sm-6">
+                          <label class="col-sm-4 control-label"><@spring.message "lov.width"/></label>
+                          <div class="col-sm-8">
+                              <input id="width" data-role="maskedtextbox" type="number" value="500" style="width: 100%" data-bind="value:model.width"
+                                     class="k-textbox">
+                              <script>kendo.bind($('#width'), viewModel);</script>
+                          </div>
+                      </div>
+                      <div class="form-group col-sm-6">
+                          <label class="col-sm-5 control-label"><@spring.message "lov.height"/></label>
+                          <div class="col-sm-7">
+                              <input id="height" data-role="maskedtextbox" type="number" value="400" style="width: 100%" data-bind="value:model.height"
+                                     class="k-textbox">
+                              <script>kendo.bind($('#height'), viewModel);</script>
+                          </div>
+                       </div>
+                  </div >-->
+                  <div class="row" style="line-height: 40px">
+                  <div class="form-group col-sm-7" style="text-align: center;">
+                          <span class="btn btn-primary" onclick="updateOrder()"
+                                 type="submit"><@spring.message "hap.save"/></span>
+                        </div>
+                     
+                       
+                  </div>
+                  </div>
+                <div class="col-sm-7">
+                   <div class="row">
+                     <div class="form-group">
+                          <label class="col-sm-2 control-label"><@spring.message "sale.orderstatus"/></label>
+                          <div class="col-sm-8">
+                                <select data-role="combobox" id="orderStatus" data-value-primitive="true"
+                                                data-text-field="meaning" data-value-field="value"
+                                                data-bind="source: requestStatusData,value:model.orderStatus" style="width: 100%;"></select>
+                       			<script>kendo.bind($('#orderStatus'), viewModel);</script>
+                           </div>
+                       </div>
+                     </div>
+                     <div id="sqlIdDiv" class="row">
+                            <div class="form-group required-input">
+                                <label class="col-sm-2 control-label"><@spring.message "sale.price"/></label>
+                                <div class="col-sm-10">
+                                    <input name="sqlId" id=unitSellingPrice data-role="maskedtextbox" type="text" style="width: 100%" data-bind="value:model.unitSellingPrice"
+                                           class="k-textbox" required>
+                                    <script>kendo.bind($('#unitSellingPrice'), viewModel);</script>
+                                </div>
+                            </div>
                     </div>
-                </form>
-                <div class="row">
-                    <div class="col-sm-5">
-                      <span class="btn btn-default" 
-                            onclick="newOrder()"><@spring.message "hap.save"/></span>
-                           <span class="btn btn-primary" data-bind="click:queryResource"
-                                 type="submit"><@spring.message "hap.submit"/></span>
-                        <span class="btn btn-default" type="button" data-bind="click:resetForm"><@spring.message "hap.check"/></span>
-                        <span class="btn btn-primary" 
-                            data-bind="click:exportExcelFunction"><@spring.message "hap.refuse"/></span>
-						
-						<span class="btn btn-primary" 
-                            data-bind="click:exportExcelFunction">整单删除</span>
-					<span class="btn btn-primary" 
-                            data-bind="click:exportExcelFunction">单据打印</span>
-					<span class="btn btn-primary" 
-                            data-bind="click:exportExcelFunction">返回</span>
-					
-							<script type="text/javascript">
-								function excelExport(){
-									//console.log(viewModel.model);
-									//console.log(viewModel.model.get("orderStatus"))
-									Hap.submitForm({
-							            url: '${base.contextPath}/orderheader/excelexport',
-							            formModel: viewModel.model,
-							            success: function (result) {
-							            
-							                
-							            }
-							        });
-								}
-							
-							</script>
+                    <div id="sqlIdDiv" class="row">
+                            <div class="form-group required-input">
+                                <label class="col-sm-2 control-label"><@spring.message "sale.order.description"/></label>
+                                <div class="col-sm-10">
+                                    <input  id="description" data-role="maskedtextbox" type="text" style="width: 100%" data-bind="value:model.description"
+                                           class="k-textbox" required>
+                                    <script>kendo.bind($('#description'), viewModel);</script>
+                                </div>
+                            </div>
                     </div>
+                         </div>
+                   <!--  <div id="customSqlDiv" class="row" style="display:none">
+                         <div class="form-group required-input">
+                            <label class="col-sm-2 control-label"><@spring.message "lov.customsql"/></label>
+                              <div class="col-sm-10">
+                                  <textarea name="customSql" id="customSql" type="text" style="width: 100%; cursor:text; color:#333;" data-bind="value:model.customSql"
+                                            class="k-textbox" rows="11" cols="" disabled></textarea>
+                                  <script>kendo.bind($('#customSql'), viewModel);</script>
+                              </div>
+                          </div>
+                     </div> -->
+           
+                   <!--  <div class="row">
+                    <div class="col-sm-2" style="display:none">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label"><@spring.message "lov.delayLoad"/></label>
+                                <div class="col-sm-6">
+                                    <input id="delayLoad" type="checkbox" class="formCheckbox" data-bind="checked:model.delayLoad"  >
+                                    <script>kendo.bind($('#delayLoad'), viewModel);</script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2" style="display:none">
+                            <div class="form-group">
+                                <label class="col-sm-8 control-label"><@spring.message "lov.needqueryparam"/></label>
+                                <div class="col-sm-4">
+                                    <input id="needQueryParam" type="checkbox" class="formCheckbox" data-bind="checked:model.needQueryParam"  >
+                                    <script>kendo.bind($('#needQueryParam'), viewModel);</script>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
                 </div>
-            </div>
-         <script>kendo.bind($('#inQuery'), viewModel);</script>
-        
-        
-        <div id='grid-container'>
-            <div id="grid" style="clear: both"></div>
+                <!-- end panel-->
+            </form>
         </div>
+       <!--  <div id='grid-container'>
+            <div id="grid" style="clear: both"></div>
+        </div> -->
     </div>
 </div>
 
@@ -469,14 +506,13 @@
     }
 
 
-    var grid = $("#grid").kendoGrid({
+   /*  var grid = $("#grid").kendoGrid({
         dataSource: viewModel2.dataSource,
         navigatable: false,
         height: '100%',
         resizable: true,
         scrollable: true,
         selectable: true,
-        rownumber: true,
         toolbar: [
             {
                 name: "create",
@@ -495,17 +531,17 @@
                 width: 30
             },
             {
-                field: "itemCode",
-                title: '<@spring.message "sale.item.itemcode"/>',
-                width: 80,
+                field: "display",
+                title: '<@spring.message "lovitem.display"/>',
+                width: 210,
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
                 }
             },
             {
-                field: "itemDescription",
-                title: '<@spring.message "sale.item.itemdescription"/>',
+                field: "gridFieldName",
+                title: '<@spring.message "lovitem.name"/>',
                 width: 100,
                 headerAttributes: {
                     "class": "table-header-cell",
@@ -513,8 +549,8 @@
                 }
             },
             {
-                field: "orderQuantityUOM",
-                title: '<@spring.message "sale.product.uom"/>',
+                field: "gridFieldWidth",
+                title: '<@spring.message "lovitem.gridfieldwidth"/>',
                 width: 70,
                 attributes: {style: "text-align:right"},
                 headerAttributes: {
@@ -522,7 +558,7 @@
                     style: "text-align: center"
                 }
             },
-           /*  {
+            {
                 width: 60,
                 headerAttributes: {
                     "class": "table-header-cell",
@@ -531,17 +567,16 @@
                 attributes: {style: "text-align:center"},
                 title: '<@spring.message "lovitem.gridcolumn"/>',
                 template: '<input type="checkbox" #=gridField=="Y" ? \'checked="checked"\':""# class="gridCheckbox"  name="gridField"/>'
-            }, */
+            },
             {
-                field: "orderQuantity",
-                title: '<@spring.message "sale.order.quantity"/>',
+                field: "gridFieldAlign",
+                title: '<@spring.message "lovitem.gridcolumnalign"/>',
                 width: 80,
-                attributes: {style: "text-align:center"},
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
-                }
-               /*  template: function (dataItem) {
+                },
+                template: function (dataItem) {
                     var v = dataItem.gridFieldAlign;
                     $.each(alignType, function (i, n) {
                         if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
@@ -560,50 +595,29 @@
                                         valuePrimitive: true,
                                         dataSource: alignType
                                     });
-                } */
-            },
-		       /*      {
-		                width: 80,
-		                headerAttributes: {
-		                    "class": "table-header-cell",
-		                    style: "text-align: center"
-		                },
-		                attributes: {style: "text-align:center"},
-		                title: '<@spring.message "lovitem.conditionfield"/>',
-		                template: '<input type="checkbox" class="gridCheckbox" #=conditionField=="Y" ? \'checked="checked"\':""# id="conditionField"  name="conditionField"/>'
-		            }, */
-            {
-                field: "unitSellingPrice",
-                title: '<@spring.message "sale.price"/>',
-                width: 60,
-                attributes: {style: "text-align:right"},
-                headerAttributes: {
-                    "class": "table-header-cell",
-                    style: "text-align: center"
                 }
             },
             {
-                field: "totalMoney",
-                title: '<@spring.message "sale.ordermoney"/>',
-                width: 60,
-                attributes: {style: "text-align:right"},
+                width: 80,
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
-                }
-            }, 
+                },
+                attributes: {style: "text-align:center"},
+                title: '<@spring.message "lovitem.conditionfield"/>',
+                template: '<input type="checkbox" class="gridCheckbox" #=conditionField=="Y" ? \'checked="checked"\':""# id="conditionField"  name="conditionField"/>'
+            },
             {
-                field: "description",
-                title: '<@spring.message "sale.order.description"/>',
+                field: "gridFieldSequence",
+                title: '<@spring.message "lovitem.gridfieldsequence"/>',
                 width: 60,
                 attributes: {style: "text-align:right"},
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
                 }
-            }
-            
-            /* {
+            },
+            {
                 // field           : "type",
                 title: '<@spring.message "lovitem.type"/>',
                 width: 80,
@@ -618,7 +632,7 @@
                     }
                     return '';
                 }
-            } */
+            }
         ],
         editable: true,
         dataBound: function (e) {
@@ -635,12 +649,15 @@
             var model = this.dataItem(this.select());
             viewModel2.set("selected", model);
         }
-    }).data("kendoGrid");
+    }).data("kendoGrid"); */
+    
+    
+    
 
-    $("#grid").data("kendoGrid").one("dataBound", function (e) {
+/*     $("#grid").data("kendoGrid").one("dataBound", function (e) {
         this.select(this.tbody.find(">tr:first"));
     });
-
+ */
     function deleteData() {
 
         var checked = $("#grid").find(".hCheckbox:checked");
@@ -666,7 +683,7 @@
 
     }
     //自动根据当前屏幕大小调整表格
-    Hap.autoResizeGrid("#grid");
+    /* Hap.autoResizeGrid("#grid"); */
     var edit;
     function openEditor(item) {
         grid.select(item.closest('tr'))
@@ -773,7 +790,7 @@
     {
         $.ajax({
             url: '${base.contextPath}/orderheader/getorderinfo?headerId=${RequestParameters.headerId!0}',
-	         type: "POST",
+            type: "POST",
             dataType: "json",
             contentType: "application/json",
             // data       : kendo.stringify(para),
@@ -814,12 +831,14 @@
 
     //处理form中的选择框
 
-
+/* 
     $("#grid").on("change", "input.gridCheckbox", function (e) {
         var target = $(e.target), grid = $("#grid").data("kendoGrid"),
                 dataItem = grid.dataItem(target.closest("tr"));
         dataItem.set(target.context.name, this.checked ? 'Y' : 'N');
-    });
+    }); */
+    
+    
     $('#editableFlag').click(function(){
         if(this.checked){
             viewModel.model.set("editableFlag",true);
@@ -865,6 +884,23 @@
     }
     
     
+    
+    
+    function updateOrder(){
+    	Hap.submitForm({
+            url: '${base.contextPath}/orderheader/updateorderInfo',
+            formModel: viewModel.model,
+            success: function (result) {
+            
+                
+            }
+        });
+    	 kendo.ui.showInfoDialog({
+             message: '订单保存成功！!'
+         });
+    	
+    }
+   
 </script>
 <style>
     .formCheckbox {

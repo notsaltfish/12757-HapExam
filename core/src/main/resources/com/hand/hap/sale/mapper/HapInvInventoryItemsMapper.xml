@@ -22,4 +22,9 @@
     LAST_UPDATE_LOGIN
   </sql>
 
+	<select id="selectIdByCode" resultType="long" parameterType="string">
+		  select INVENTORY_ITEM_ID from hap_inv_inventory_items
+		   where item_code = #{itemCode}
+	</select>
+
 </mapper>

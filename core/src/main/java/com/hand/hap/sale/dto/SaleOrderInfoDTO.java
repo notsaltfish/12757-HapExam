@@ -1,6 +1,7 @@
 package com.hand.hap.sale.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -18,43 +19,62 @@ public class SaleOrderInfoDTO {
     
     private String customerName;
     
-    private String itemCode;
+    private List<HapInvInventoryItems> items;
+    
+    private List<HapOmOrderLines> lines;
     
     private String companyName;
     
     private Long totalMoney;
-
+   
+    private Long headerId;
+    
     private Long inventoryItemId;
     
     private String itemDescription;
     
-    public String getItemCode() {
-		return itemCode;
+    private List<SaleOrderDetail> details;
+    
+    
+
+	public List<SaleOrderDetail> getDetails() {
+		return details;
 	}
 
-	public void setItemCode(String itemCode) {
-		this.itemCode = itemCode;
+	public void setDetails(List<SaleOrderDetail> details) {
+		this.details = details;
 	}
 
-	private Long orderQuantity;
-    
-    private String orderQuantityUOM;
-    
-    private Long unitSellingPrice;
-    
-    private String description;
-    
-    private Long headerId;
-    
-    
-    
-    
 	public String getItemDescription() {
 		return itemDescription;
 	}
 
 	public void setItemDescription(String itemDescription) {
 		this.itemDescription = itemDescription;
+	}
+
+	public Long getInventoryItemId() {
+		return inventoryItemId;
+	}
+
+	public void setInventoryItemId(Long inventoryItemId) {
+		this.inventoryItemId = inventoryItemId;
+	}
+
+	public List<HapInvInventoryItems> getItems() {
+		return items;
+	}
+
+	public void setItems(List<HapInvInventoryItems> items) {
+		this.items = items;
+	}
+
+	public List<HapOmOrderLines> getLines() {
+		return lines;
+	}
+
+	public void setLines(List<HapOmOrderLines> lines) {
+		this.lines = lines;
 	}
 
 	public Long getHeaderId() {
@@ -65,37 +85,6 @@ public class SaleOrderInfoDTO {
 		this.headerId = headerId;
 	}
 
-	public Long getOrderQuantity() {
-		return orderQuantity;
-	}
-
-	public void setOrderQuantity(Long orderQuantity) {
-		this.orderQuantity = orderQuantity;
-	}
-
-	public String getOrderQuantityUOM() {
-		return orderQuantityUOM;
-	}
-
-	public void setOrderQuantityUOM(String orderQuantityUOM) {
-		this.orderQuantityUOM = orderQuantityUOM;
-	}
-
-	public Long getUnitSellingPrice() {
-		return unitSellingPrice;
-	}
-
-	public void setUnitSellingPrice(Long unitSellingPrice) {
-		this.unitSellingPrice = unitSellingPrice;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String descrtiption) {
-		this.description = descrtiption;
-	}
 
 	public String getOrderNumber() {
 		return orderNumber;
@@ -162,14 +151,6 @@ public class SaleOrderInfoDTO {
 		this.totalMoney = totalMoney;
 	}
 
-	public Long getInventoryItemId() {
-		return inventoryItemId;
-	}
 
-	public void setInventoryItemId(Long inventoryItemId) {
-		this.inventoryItemId = inventoryItemId;
-	}
-    
-	
     
 }

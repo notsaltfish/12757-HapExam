@@ -19,7 +19,7 @@ import com.hand.hap.core.IRequest;
 import com.hand.hap.excel.dto.ColumnInfo;
 import com.hand.hap.excel.dto.ExportConfig;
 import com.hand.hap.excel.service.IExportService;
-import com.hand.hap.function.dto.Function;
+import com.hand.hap.sale.dto.SaleOrderDetail;
 import com.hand.hap.sale.dto.SaleOrderInfoDTO;
 import com.hand.hap.sale.service.IHapOmOrderHeadersService;
 import com.hand.hap.system.controllers.BaseController;
@@ -40,7 +40,7 @@ public class HapOmOrderHeadersController extends BaseController{
 	@RequestMapping(path="getorderinfo",method=RequestMethod.POST)
 	public ResponseData getOrderInfo(SaleOrderInfoDTO order,
 																	@RequestParam(required=false,defaultValue="1")int page,
-																	@RequestParam(required=false,defaultValue="10")int pageSize){
+																	@RequestParam(required=false,defaultValue="50")int pageSize){
 		
 		
 		return iHapOmOrderHeaders.getQueryOrderInfo(order, page, pageSize);
@@ -53,6 +53,22 @@ public class HapOmOrderHeadersController extends BaseController{
 		return iHapOmOrderHeaders.updateOrderInfo(order[0]);
 	}
 	
+	
+	@ResponseBody
+	@RequestMapping(path="getorderdetail",method=RequestMethod.POST)
+	public ResponseData getOrderDetail(SaleOrderInfoDTO order
+																	){
+		
+		
+		return iHapOmOrderHeaders.getSaleOrderDetail(order);
+	}
+	
+	@ResponseBody
+	@RequestMapping(path="submit",method=RequestMethod.POST)
+	public ResponseData submit(@RequestBody SaleOrderInfoDTO[] order){
+		
+		return iHapOmOrderHeaders.updateOrSave(order);
+	}
 	
 	/*@RequestMapping("excelexport")
 	public ResponseData excelExport(@RequestBody SaleOrderInfoDTO[] orders
@@ -78,10 +94,18 @@ public class HapOmOrderHeadersController extends BaseController{
         }
     }
 	
-	@RequestMapping(path="create")
-	public ResponseData create(HttpServletRequest request,@RequestBody SaleOrderInfoDTO order){
-		IRequest irequest  =this.createRequestContext(request);
-		return iHapOmOrderHeaders.insertBySaleOrderDTO(irequest, order);
+	@ResponseBody
+	@RequestMapping(path="deleteline")
+	public ResponseData deleteLine(@RequestBody SaleOrderDetail[] details){
+		
+		System.out.println("dsds");
+		//return iHapOmOrderHeaders.deleteLine(lineId);
+		return iHapOmOrderHeaders.deleteLine(details);
+	}
+	
+	@RequestMapping(path="deleteheader")
+	public ResponseData create(long headerId ){
+		return iHapOmOrderHeaders.deleteHeader(headerId);
 	}
 	
 }

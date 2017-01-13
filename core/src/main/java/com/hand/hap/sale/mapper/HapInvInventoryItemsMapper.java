@@ -5,4 +5,6 @@ import com.hand.hap.sale.dto.HapInvInventoryItems;
 
 public interface HapInvInventoryItemsMapper extends Mapper<HapInvInventoryItems>{
 
+	Long selectIdByCode(String string);
+
 }

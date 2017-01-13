@@ -60,5 +60,56 @@
 			</set>
 	 where header_id = #{headerId}
 	</update> 
+	
+<insert id="insertByList" useGeneratedKeys="true" parameterType="java.util.List">  
+    <selectKey resultType="long" keyProperty="id" order="AFTER">  
+        SELECT  
+        LAST_INSERT_ID()  
+    </selectKey>  
+    insert into hap_om_order_lines (header_id,orderd_quantity,order_quantity_uom,unit_selling_price,description)   
+    values  
+    <foreach collection="list" item="item" index="index" separator="," >  
+        (#{item.headerId},#{item.orderQuantity},#{item.orderQuantityUOM},#{item.unitSellingPrice},#{item.description})  
+    </foreach>  
+</insert>  
+	
 
+	<!-- <update id="updateByList" parameterType="com.hand.hap.sale.dto.HapOmOrderLines">
+			update hap_om_order_lines 
+			<set>
+				<if test=" orderdQuantity !=null"> ORDERD_QUANTITY=#{orderdQuantity},</if>
+				<if test=" orderQuantityUom !=null"> ORDER_QUANTITY_UOM=#{orderQuantityUom},</if>
+				<if test=" unitSellingPrice !=null"> UNIT_SELLING_PRICE=#{unitSellingPrice},</if>
+				<if test=" companyId !=null"> COMPANY_ID=#{companyId},</if>
+				<if test=" description !=null"> DESCRIPTION=#{description}</if>
+			</set>
+	 where header_id = #{headerId}
+	</update>  -->
+	
+	<update id="updateByList" parameterType="java.util.List">
+		<foreach collection="list" item="item" index="index" separator=";"
+		  open="" close="">
+		  update hap_om_order_lines 
+		   <set>
+				<if test=" orderdQuantity !=null"> ORDERD_QUANTITY=#{item.orderdQuantity},</if>
+				<if test=" orderQuantityUom !=null"> ORDER_QUANTITY_UOM=#{item.orderQuantityUom},</if>
+				<if test=" unitSellingPrice !=null"> UNIT_SELLING_PRICE=#{item.unitSellingPrice},</if>
+				<if test=" companyId !=null"> COMPANY_ID=#{item.companyId},</if>
+				<if test=" description !=null"> DESCRIPTION=#{item.description}</if>
+			</set>
+			 where header_id = #{item.lineId}
+		</foreach>
+</update>
+		
+		<delete id="deleteByArray" parameterType="long">
+				delete from hap_om_order_lines where line_id in
+				<foreach collection="array" item="ite" open="(" close=")" separator=",">
+						#{ite}
+				</foreach>
+		</delete>
+		
+		<delete id="deleteByHeaderId" parameterType="long">
+				delete from hap_om_order_lines where header_id =#{id}
+				
+		</delete>
 </mapper>

@@ -402,7 +402,7 @@
                     title: '<@spring.message"sale.ordernumber"/>',
                     width: 100,
 //                    template: "<a href='sale_order_edit.html?id/#= orderNumber #/'>#= orderNumber #</a>" ,
-                    template: "<a  onclick='editOrder(#= orderNumber #)'  href='javascript:void(0)'>#= orderNumber #</a>" ,
+                    template: "<a  onclick='editOrder(#= headerId #)'  href='javascript:void(0)'>#= orderNumber #</a>" ,
                     attributes: {style: "text-align:center"}
                 },
                 /* 公司名称 */
@@ -500,9 +500,10 @@
                close:function(){
                    viewModel.queryResource();
                },
-               content: 'sale_order_add.html'
+               content: 'sale_order_edit.html'
            }).data("kendoWindow");
-    	   
+    	   dialog.maximize();
+           dialog.open();
            dialog.title('<@spring.message "sale.orderadd"/>').center().open();
     	   
        }

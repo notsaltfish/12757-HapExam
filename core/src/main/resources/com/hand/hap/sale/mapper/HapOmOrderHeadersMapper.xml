@@ -34,19 +34,31 @@
     <result column="ATTRIBUTE15" property="attribute15" jdbcType="VARCHAR" />
   </resultMap>
   <resultMap type="com.hand.hap.sale.dto.SaleOrderInfoDTO" id="saleOrderInfoRM">
-  		<result column="header_id" property="headerId"/>
+  		<id column="header_id" property="headerId"/>
   		<result column="order_number" property="orderNumber"/>
+  	  <result column="COMPANY_ID" property="companyId"  />
+  	   <result column="CUSTOMER_ID" property="customerId"  />
+  	   <result column="inventory_item_id" property="inventoryItemId"  />
+  	   
   		<result column="company_name" property="companyName"/>
   		<result column="customer_name" property="customerName"/>
   		<result column="order_date" property="orderDate"/>
   		<result column="order_status" property="orderStatus"/>
-  		<result column="total_money" property="totalMoney"/>
-  		<result column="orderd_quantity" property="orderQuantity"/>
-  		<result column="order_quantity_uom" property="orderQuantityUOM"/>
-  		<result column="unit_selling_price" property="unitSellingPrice"/>
-  		<result column="description" property="description"/>
-  		<result column="ITEM_DESCRIPTION" property="itemDescription"/>
-  		<result column="ITEM_CODE" property="itemCode"/>
+  		<!-- <result column="total_money" property="totalMoney"/> -->
+  		 <collection property="lines" ofType="com.hand.hap.sale.dto.HapOmOrderLines">
+  		  		<id property="lineId" column="line_id"></id>
+  		  		<result column="orderd_quantity" property="orderdQuantity"/>
+  				<result column="order_quantity_uom" property="orderQuantityUom"/>
+  				<result column="unit_selling_price" property="unitSellingPrice"/>
+  				<result column="description" property="description"/>
+  				<result column="line_number" property="lineNumber"/>
+  				<result property="inventoryItemId" column="INVENTORY_ITEM_ID"></result>
+  		 </collection>
+	 	<collection property="items" ofType="com.hand.hap.sale.dto.HapInvInventoryItems">
+			  		<id property="inventoryItemId" column="INVENTORY_ITEM_ID"></id>
+			  		<result column="ITEM_DESCRIPTION" property="itemDescription"/>
+			  		<result column="ITEM_CODE" property="itemCode"/>
+	   </collection>
   </resultMap>
   <sql id="Base_Column_List" >
     HEADER_ID, ORDER_NUMBER, COMPANY_ID, ORDER_DATE, ORDER_STATUS, CUSTOMER_ID, OBJECT_VERSION_NUMBER, 
@@ -57,9 +69,10 @@
   </sql>
   
   	<select id="selectOrderInfo" parameterType="com.hand.hap.sale.dto.SaleOrderInfoDTO" resultMap="saleOrderInfoRM">
-  		SELECT hooh.header_id,hooh.order_number,hoc.company_name,hac.customer_name,hooh.order_date,
-		hooh.order_status,hool.unit_selling_price,hool.description,hool.order_quantity_uom,hool.orderd_quantity,hool.unit_selling_price*hool.orderd_quantity AS total_money, 
-		hiii.ITEM_DESCRIPTION,hiii.ITEM_CODE
+  		SELECT hooh.header_id,hooh.company_id,hooh.customer_id,hooh.order_number,hoc.company_name,hac.customer_name,hooh.order_date,
+		hooh.order_status,hool.unit_selling_price,hool.description,hool.order_quantity_uom,hool.orderd_quantity,
+		hool.line_id,hool.line_number,
+		hiii.ITEM_DESCRIPTION,hiii.ITEM_CODE,hool.inventory_item_id
 		FROM hap_om_order_headers hooh
 		LEFT JOIN hap_om_order_lines hool ON hooh.header_id = hool.header_id
 		LEFT JOIN hap_org_companys hoc ON hooh.COMPANY_ID = hoc.company_id
@@ -74,5 +87,9 @@
   		<if test="headerId !=null"> and hooh.header_id=#{headerId}</if>
   		
   	</select>
+  
+  <delete id="deleteByHeaderId" parameterType="long">
+  		delete from hap_om_order_headers where header_id = #{id}
+  </delete>
   
 </mapper>

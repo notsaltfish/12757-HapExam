@@ -8,4 +8,8 @@ import com.hand.hap.sale.dto.SaleOrderInfoDTO;
 
 public interface HapOmOrderHeadersMapper extends Mapper<HapOmOrderHeaders>{
 	List<SaleOrderInfoDTO> selectOrderInfo(SaleOrderInfoDTO order);
+
+	void deleteAllByHeaderId(Long headerId);
+
+	void deleteByHeaderId(Long headerId);
 }
