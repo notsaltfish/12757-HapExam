@@ -600,7 +600,80 @@ var tabstrip =  $("#tabstrip").kendoTabStrip({
     }
 
 
-    var grid = $("#grid").kendoGrid({
+    
+	var gridEditable = true;
+    if (${RequestParameters.isedit!0}== '1')
+    {
+    	
+        $.ajax({
+            url: '${base.contextPath}/orderheader/getorderheader?headerId=${RequestParameters.headerId!0}',
+	         type: "POST",
+            dataType: "json",
+            async: false,
+            contentType: "application/json",
+            // data       : kendo.stringify(para),
+            success: function (args) {
+                //数据成功以后 绑定到viewmodel上
+                var a0 = args.rows[0] || {};
+                var defaultSqlType = 0;
+                for (var k in a0) {
+                  /*   if(k=='orderStatus'){
+                        if(a0[k]==""){
+                            defaultSqlType = 1;
+                        }else{
+                            defaultSqlType=0;
+                        }
+                    } */
+                   /*  if (k == 'delayLoad' || k == 'needQueryParam' || k == 'editableFlag') {
+                        var elementId = k;
+                        viewModel.model.set(k, a0[k] == 'Y');
+                        if(viewModel.model.get(k)){
+                            $("#"+k).attr("checked",true);
+                        }
+                    } 
+                    else*/
+                        viewModel.model.set(k, a0[k]);
+                }
+                
+                viewModel.model.set("NewNow",false);
+               
+                
+                //生成sqlType的select下拉框
+                //getSqlTypeSelect(defaultSqlType);
+            },
+            error: function () {
+
+            }
+        });
+        
+        var orderStatus = viewModel.model.orderStatus;
+        if(orderStatus=="SUBMITED"){
+    		gridEditable=false;
+        	$("#lovCompany").data("kendoLov").readonly();
+        	$("#lovCustomer").data("kendoLov").readonly();
+        	$("#myForm input,textarea").attr("disabled","disabled");
+        }else if(orderStatus=="APPROVED"){
+        	gridEditable=false;
+        	$("#lovCompany").data("kendoLov").readonly();
+        	$("#lovCustomer").data("kendoLov").readonly();
+        	$("#myForm input,textarea").attr("disabled","disabled");
+        }
+        
+        authority();
+        
+    }else{
+    	viewModel.model.set("orderDate", new Date())
+    	viewModel.model.set("orderStatus","NEW");
+    	viewModel.model.set("NewNow",true);
+    	$("#op_delete").css("display","none");
+		$("#op_submit").css("display","none");
+		$("#op_print").css("display","none");
+		$("#op_check").css("display","none");
+		$("#op_refuse").css("display","none");
+    }
+    
+
+	var grid = $("#grid").kendoGrid({
         dataSource: viewModel2.dataSource,
         navigatable: false,
         height: '100%',
@@ -766,7 +839,7 @@ var tabstrip =  $("#tabstrip").kendoTabStrip({
             }
         ],
         attributes: {style: "text-align:center"},
-        editable: true,
+        editable: gridEditable,
         dataBound: function (e) {
             var view = this.dataSource.view();
             this.items().each(function (index, row) {
@@ -781,6 +854,7 @@ var tabstrip =  $("#tabstrip").kendoTabStrip({
     }).data("kendoGrid");
 
 
+    
     
     var othergrid = $("#othergrid").kendoGrid({
         dataSource: viewModel2.dataSource,
@@ -859,7 +933,7 @@ var tabstrip =  $("#tabstrip").kendoTabStrip({
             },
     
         ],
-        editable: true,
+        editable: gridEditable,
         dataBound: function (e) {
             var view = this.dataSource.view();
             this.items().each(function (index, row) {
@@ -1022,67 +1096,9 @@ var tabstrip =  $("#tabstrip").kendoTabStrip({
     });
     }
     
-    if (${RequestParameters.isedit!0}== '1')
-    {
-    	
-        $.ajax({
-            url: '${base.contextPath}/orderheader/getorderheader?headerId=${RequestParameters.headerId!0}',
-	         type: "POST",
-            dataType: "json",
-            contentType: "application/json",
-            // data       : kendo.stringify(para),
-            success: function (args) {
-                //数据成功以后 绑定到viewmodel上
-                var a0 = args.rows[0] || {};
-                var defaultSqlType = 0;
-                for (var k in a0) {
-                  /*   if(k=='orderStatus'){
-                        if(a0[k]==""){
-                            defaultSqlType = 1;
-                        }else{
-                            defaultSqlType=0;
-                        }
-                    } */
-                   /*  if (k == 'delayLoad' || k == 'needQueryParam' || k == 'editableFlag') {
-                        var elementId = k;
-                        viewModel.model.set(k, a0[k] == 'Y');
-                        if(viewModel.model.get(k)){
-                            $("#"+k).attr("checked",true);
-                        }
-                    } 
-                    else*/
-                        viewModel.model.set(k, a0[k]);
-                }
-                
-                viewModel.model.set("NewNow",false);
-               
-                
-                //生成sqlType的select下拉框
-                //getSqlTypeSelect(defaultSqlType);
-            },
-            error: function () {
-
-            }
-        });
-        
-        var orderStatus = viewModel.model.orderStatus;
-        if(orderStatus=="SUBMITED"){
-        	//$('input,select,textarea',$('#myForm')).prop('readonly',true);
-        	$("#myForm input,textarea").attr("disabled","disabled");
-        }else if(orderStatus=="APPROVED"){
-        	$("#myForm input,textarea").attr("disabled","disabled");
-        }
-        
-    }else{
-    	viewModel.model.set("orderDate", new Date())
-    	viewModel.model.set("orderStatus","NEW");
-    	viewModel.model.set("NewNow",true);
-    	$("#op_delete").attr("disabled","disabled");
-		$("#op_submit").attr("disabled","disabled");
-		$("#op_print").attr("disabled","disabled");
-		$("#op_check").attr("disabled","disabled");
-		$("#op_refuse").attr("disabled","disabled");
-    }
+  
+  
+  
     
     //authority();
     //处理form中的选择框
@@ -1152,28 +1168,38 @@ var tabstrip =  $("#tabstrip").kendoTabStrip({
 	function authority(){
 		var status = viewModel.model.orderStatus;
 		if(status=="NEW"){
-			$("#op_delete").css("display","inline");
-			$("#op_submit").css("display","inline");
-			$("#op_save").css("display","inline");
+			$("#op_check").css("display","none");
+			$("#op_refuse").css("display","none");
 			
 		//	op_delete  op_refuse op_check op_submit op_save
 		}else if(status=="APPROVED"){
+			$("#op_delete").css("display","none");
+			$("#op_check").css("display","none");
+			$("#op_refuse").css("display","none");
+			$("#op_submit").css("display","none");
+			$("#op_save").css("display","none");
 			
 		}else if(status=="SUBMITED"){
-
 			
-			$("#op_check").css("display","inline");
-			$("#op_refuse").css("display","inline");
-			$("#op_delete").css("display","inline");
+			$("#op_delete").css("display","none");
+			$("#op_submit").css("display","none");
+			$("#op_save").css("display","none");
 		}
 		else if(status=="REJECTED"){
-			$("#op_delete").css("display","inline");
-			$("#op_submit").css("display","inline");
-			$("#op_save").css("display","inline");
+		
+			$("#op_check").css("display","none");
+			$("#op_refuse").css("display","none");
 		}
 
 	
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 </script>

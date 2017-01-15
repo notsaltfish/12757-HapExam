@@ -112,4 +112,8 @@
 				delete from hap_om_order_lines where header_id =#{id}
 				
 		</delete>
+		
+		<select id="selectMaxLineNumber" resultType="long" parameterType="long">
+			select ifnull(max(line_number),1) from hap_om_order_lines where header_id=#{header_id}
+		</select>
 </mapper>

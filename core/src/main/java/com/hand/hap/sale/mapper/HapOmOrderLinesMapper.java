@@ -17,5 +17,7 @@ public interface HapOmOrderLinesMapper extends Mapper<HapOmOrderLines>{
 	void deleteByArray(long[] lineId);
 
 	void deleteByHeaderId(Long headerId);
+
+	long selectMaxLineNumber(Long headerId);
   
 }

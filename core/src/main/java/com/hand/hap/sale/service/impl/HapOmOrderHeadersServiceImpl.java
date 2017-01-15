@@ -103,7 +103,7 @@ public class HapOmOrderHeadersServiceImpl extends BaseServiceImpl<HapOmOrderHead
 	private List<HapOmOrderLines> getLines(SaleOrderInfoDTO order) {
 		List<HapOmOrderLines> lines = new ArrayList<HapOmOrderLines>();
 		List<SaleOrderDetail> details = order.getDetails();
-		long maxLineNumber = hapInvInventoryItemsMapper.selectMaxLineNumber(order.getHeaderId());
+		long maxLineNumber = hapOmOrderLineMapper.selectMaxLineNumber(order.getHeaderId());
 		HapOmOrderLines line = null;
 		for(SaleOrderDetail detail:details){
 			Long itemId = hapInvInventoryItemsMapper.selectIdByCode(detail.getItemCode());
