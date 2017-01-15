@@ -40,6 +40,68 @@ public class SaleOrderDetail {
 
 	    private String itemDescription;
 
+	    private String addition1;
+	    
+	    private String addition2;
+	    
+	    private String addition3;
+	    
+	    private String addition4;
+	    
+	    private String addition5;
+	    
+	    private Long totalMoney;
+	    
+	    
+	    
+		public Long getTotalMoney() {
+			return totalMoney;
+		}
+
+		public void setTotalMoney(Long totalMoney) {
+			this.totalMoney = totalMoney;
+		}
+
+		public String getAddition1() {
+			return addition1;
+		}
+
+		public void setAddition1(String addition1) {
+			this.addition1 = addition1;
+		}
+
+		public String getAddition2() {
+			return addition2;
+		}
+
+		public void setAddition2(String addition2) {
+			this.addition2 = addition2;
+		}
+
+		public String getAddition3() {
+			return addition3;
+		}
+
+		public void setAddition3(String addition3) {
+			this.addition3 = addition3;
+		}
+
+		public String getAddition4() {
+			return addition4;
+		}
+
+		public void setAddition4(String addition4) {
+			this.addition4 = addition4;
+		}
+
+		public String getAddition5() {
+			return addition5;
+		}
+
+		public void setAddition5(String addition5) {
+			this.addition5 = addition5;
+		}
+
 		public String getCompanyName() {
 			return companyName;
 		}
@@ -192,14 +254,18 @@ public class SaleOrderDetail {
 				this.setUnitSellingPrice(lines.getUnitSellingPrice());
 				this.setLineNumber(lines.getLineNumber());
 				this.setLineMoney(lines.getUnitSellingPrice()*lines.getOrderdQuantity());
-				
+				this.setAddition1(lines.getAddition1());
+				this.setAddition2(lines.getAddition2());
+				this.setAddition3(lines.getAddition3());
+				this.setAddition4(lines.getAddition4());
+				this.setAddition5(lines.getAddition5());
 		}
 
 		public void setItemsInfo(HapInvInventoryItems item) {
 			this.setInventoryItemId(item.getInventoryItemId());
 			this.setItemDescription(item.getItemDescription());
 			this.setItemCode(item.getItemCode());
-			
+
 		}
 
 		public void setHeaderInfo(SaleOrderInfoDTO dto) {

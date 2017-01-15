@@ -37,13 +37,21 @@ public class HapOmOrderHeadersController extends BaseController{
 	   ObjectMapper objectMapper;
 	
 	@ResponseBody
-	@RequestMapping(path="getorderinfo",method=RequestMethod.POST)
-	public ResponseData getOrderInfo(SaleOrderInfoDTO order,
-																	@RequestParam(required=false,defaultValue="1")int page,
-																	@RequestParam(required=false,defaultValue="50")int pageSize){
+	@RequestMapping(path="getorderinfo")
+	public ResponseData getOrderInfo( SaleOrderInfoDTO order,
+			@RequestParam(defaultValue = DEFAULT_PAGE) int  page,
+			 @RequestParam(defaultValue = DEFAULT_PAGE_SIZE)int pagesize){
 		
 		
-		return iHapOmOrderHeaders.getQueryOrderInfo(order, page, pageSize);
+		return iHapOmOrderHeaders.getQueryOrderInfo(order, page, pagesize);
+	}
+	
+	@ResponseBody
+	@RequestMapping(path="getorderheader",method=RequestMethod.POST)
+	public ResponseData getOrderHeader(SaleOrderInfoDTO order){
+		
+		
+		return iHapOmOrderHeaders.getQueryOrderInfo(order, 1, 10);
 	}
 	
 	@ResponseBody
@@ -56,17 +64,17 @@ public class HapOmOrderHeadersController extends BaseController{
 	
 	@ResponseBody
 	@RequestMapping(path="getorderdetail",method=RequestMethod.POST)
-	public ResponseData getOrderDetail(SaleOrderInfoDTO order
+	public ResponseData getOrderDetail(long headerId
 																	){
-		
-		
+		SaleOrderInfoDTO order = new SaleOrderInfoDTO();
+		order.setHeaderId(headerId);
 		return iHapOmOrderHeaders.getSaleOrderDetail(order);
 	}
 	
 	@ResponseBody
 	@RequestMapping(path="submit",method=RequestMethod.POST)
 	public ResponseData submit(@RequestBody SaleOrderInfoDTO[] order){
-		
+	
 		return iHapOmOrderHeaders.updateOrSave(order);
 	}
 	
@@ -87,7 +95,7 @@ public class HapOmOrderHeadersController extends BaseController{
             JavaType type = objectMapper.getTypeFactory().constructParametrizedType(ExportConfig.class,
                     ExportConfig.class, SaleOrderInfoDTO.class, ColumnInfo.class);
             ExportConfig<SaleOrderInfoDTO, ColumnInfo> exportConfig = objectMapper.readValue(config, type);
-            excelService.exportAndDownloadExcel("com.hand.hap.sale.mapper.HapOmOrderHeadersMapper.selectOrderInfo",
+            excelService.exportAndDownloadExcel("com.hand.hap.sale.mapper.HapOmOrderHeadersMapper.selectExcelInfo",
                     exportConfig, request, httpServletResponse, requestContext);
         } catch (IOException e) {
             e.printStackTrace();

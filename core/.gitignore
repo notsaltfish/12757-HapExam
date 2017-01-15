@@ -11,7 +11,7 @@
 **/out
 /overlays/
 /core/overlays/
-
+/core/src/main/resources/rebel.xml
 # Mac
 .DS_Store
 

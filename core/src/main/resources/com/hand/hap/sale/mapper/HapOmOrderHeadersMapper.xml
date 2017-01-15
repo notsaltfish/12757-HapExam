@@ -53,6 +53,11 @@
   				<result column="description" property="description"/>
   				<result column="line_number" property="lineNumber"/>
   				<result property="inventoryItemId" column="INVENTORY_ITEM_ID"></result>
+  				<result property="addition1" column="addition1"></result>
+  				<result property="addition2" column="addition2"></result>
+  				<result property="addition3" column="addition3"></result>
+  				<result property="addition4" column="addition4"></result>
+  				<result property="addition5" column="addition5"></result>
   		 </collection>
 	 	<collection property="items" ofType="com.hand.hap.sale.dto.HapInvInventoryItems">
 			  		<id property="inventoryItemId" column="INVENTORY_ITEM_ID"></id>
@@ -60,6 +65,23 @@
 			  		<result column="ITEM_CODE" property="itemCode"/>
 	   </collection>
   </resultMap>
+  <!-- 用来导出excel的映射文件 -->
+  <resultMap type="com.hand.hap.sale.dto.SaleOrderDetail" id="OrderDetailRM">
+  
+  		<result column="order_number" property="orderNumber"/>
+  		<result column="company_name" property="companyName"/>
+  		<result column="customer_name" property="customerName"/>
+  		<result column="order_date" property="orderDate"/>
+  		<result column="order_status" property="orderStatus"/>
+  		<!-- <result column="total_money" property="totalMoney"/> -->
+  		  		<result column="orderd_quantity" property="orderdQuantity"/>
+  				<result column="unit_selling_price" property="unitSellingPrice"/>
+		  		<result column="ITEM_DESCRIPTION" property="itemDescription"/>
+		  		<result column="ITEM_CODE" property="itemCode"/>
+		  		<result column="totalMoney" property="totalMoney"/>
+  				
+  </resultMap>
+  
   <sql id="Base_Column_List" >
     HEADER_ID, ORDER_NUMBER, COMPANY_ID, ORDER_DATE, ORDER_STATUS, CUSTOMER_ID, OBJECT_VERSION_NUMBER, 
     REQUEST_ID, PROGRAM_ID, CREATION_DATE, CREATED_BY, LAST_UPDATED_BY, LAST_UPDATE_DATE, 
@@ -68,10 +90,10 @@
     ATTRIBUTE12, ATTRIBUTE13, ATTRIBUTE14, ATTRIBUTE15
   </sql>
   
-  	<select id="selectOrderInfo" parameterType="com.hand.hap.sale.dto.SaleOrderInfoDTO" resultMap="saleOrderInfoRM">
+  	<select id="selectOrderInfo" resultOrdered="true" parameterType="com.hand.hap.sale.dto.SaleOrderInfoDTO" resultMap="saleOrderInfoRM">
   		SELECT hooh.header_id,hooh.company_id,hooh.customer_id,hooh.order_number,hoc.company_name,hac.customer_name,hooh.order_date,
 		hooh.order_status,hool.unit_selling_price,hool.description,hool.order_quantity_uom,hool.orderd_quantity,
-		hool.line_id,hool.line_number,
+		hool.line_id,hool.line_number,hool.addition1,hool.addition2,hool.addition3,hool.addition4,hool.addition5,
 		hiii.ITEM_DESCRIPTION,hiii.ITEM_CODE,hool.inventory_item_id
 		FROM hap_om_order_headers hooh
 		LEFT JOIN hap_om_order_lines hool ON hooh.header_id = hool.header_id
@@ -87,9 +109,341 @@
   		<if test="headerId !=null"> and hooh.header_id=#{headerId}</if>
   		
   	</select>
+  	
+  	<select id="selectCountHeader" resultType="long">
+  	SELECT count(*)
+		FROM hap_om_order_headers hooh
+		LEFT JOIN hap_om_order_lines hool ON hooh.header_id = hool.header_id
+		LEFT JOIN hap_org_companys hoc ON hooh.COMPANY_ID = hoc.company_id
+		LEFT JOIN hap_ar_customers hac ON hooh.customer_id = hac.customer_id
+		LEFT JOIN hap_inv_inventory_items hiii on hool.INVENTORY_ITEM_ID=hiii.INVENTORY_ITEM_ID
+  		where 1=1 
+  		<if test="companyId !=null"> and hooh.company_id=#{companyId}</if>
+  		<if test="customerId !=null"> and hooh.customer_id=#{customerId}</if>
+  		<if test="orderStatus !=null"> and hooh.order_status=#{orderStatus}</if>
+  		<if test="orderNumber !=null"> and hooh.order_number=#{orderNumber}</if>
+  		<if test="inventoryItemId !=null"> and hool.inventory_item_id=#{inventoryItemId}</if>
+  		<if test="headerId !=null"> and hooh.header_id=#{headerId}</if>
+  		
+  	
+  	</select>
+  	
+  	<!-- 用来查询导出excel文件的信息 -->
+  	<select id="selectExcelInfo" resultOrdered="true" parameterType="com.hand.hap.sale.dto.SaleOrderInfoDTO" resultMap="OrderDetailRM">
+  		SELECT hooh.order_number,hoc.company_name,hac.customer_name,hooh.order_date,
+		hooh.order_status,hool.unit_selling_price,hool.orderd_quantity,hool.orderd_quantity*hool.unit_selling_price as totalMoney,
+		hiii.ITEM_DESCRIPTION,hiii.ITEM_CODE
+		FROM hap_om_order_headers hooh
+		LEFT JOIN hap_om_order_lines hool ON hooh.header_id = hool.header_id
+		LEFT JOIN hap_org_companys hoc ON hooh.COMPANY_ID = hoc.company_id
+		LEFT JOIN hap_ar_customers hac ON hooh.customer_id = hac.customer_id
+		LEFT JOIN hap_inv_inventory_items hiii on hool.INVENTORY_ITEM_ID=hiii.INVENTORY_ITEM_ID
+  		where 1=1 
+  		<if test="companyId !=null"> and hooh.company_id=#{companyId}</if>
+  		<if test="customerId !=null"> and hooh.customer_id=#{customerId}</if>
+  		<if test="orderStatus !=null"> and hooh.order_status=#{orderStatus}</if>
+  		<if test="orderNumber !=null"> and hooh.order_number=#{orderNumber}</if>
+  		<if test="inventoryItemId !=null"> and hool.inventory_item_id=#{inventoryItemId}</if>
+  		<if test="headerId !=null"> and hooh.header_id=#{headerId}</if>
+  		
+  	</select>
+  	
+  	
+  	<update id="updateByPrimaryKeySelective2" parameterType="com.hand.hap.sale.dto.HapOmOrderHeaders" >
+    update hap_om_order_headers
+    <set >
+      <if test="orderNumber != null" >
+        ORDER_NUMBER = #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        COMPANY_ID = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="orderDate != null" >
+        ORDER_DATE = #{orderDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderStatus != null" >
+        ORDER_STATUS = #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        CUSTOMER_ID = #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="objectVersionNumber != null" >
+        OBJECT_VERSION_NUMBER = #{objectVersionNumber,jdbcType=DECIMAL},
+      </if>
+      <if test="requestId != null" >
+        REQUEST_ID = #{requestId,jdbcType=BIGINT},
+      </if>
+      <if test="programId != null" >
+        PROGRAM_ID = #{programId,jdbcType=BIGINT},
+      </if>
+      <if test="creationDate != null" >
+        CREATION_DATE = #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null" >
+        CREATED_BY = #{createdBy,jdbcType=DECIMAL},
+      </if>
+      <if test="lastUpdatedBy != null" >
+        LAST_UPDATED_BY = #{lastUpdatedBy,jdbcType=DECIMAL},
+      </if>
+      <if test="lastUpdateDate != null" >
+        LAST_UPDATE_DATE = #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateLogin != null" >
+        LAST_UPDATE_LOGIN = #{lastUpdateLogin,jdbcType=DECIMAL},
+      </if>
+      <if test="attributeCategory != null" >
+        ATTRIBUTE_CATEGORY = #{attributeCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute1 != null" >
+        ATTRIBUTE1 = #{attribute1,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute2 != null" >
+        ATTRIBUTE2 = #{attribute2,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute3 != null" >
+        ATTRIBUTE3 = #{attribute3,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute4 != null" >
+        ATTRIBUTE4 = #{attribute4,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute5 != null" >
+        ATTRIBUTE5 = #{attribute5,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute6 != null" >
+        ATTRIBUTE6 = #{attribute6,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute7 != null" >
+        ATTRIBUTE7 = #{attribute7,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute8 != null" >
+        ATTRIBUTE8 = #{attribute8,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute9 != null" >
+        ATTRIBUTE9 = #{attribute9,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute10 != null" >
+        ATTRIBUTE10 = #{attribute10,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute11 != null" >
+        ATTRIBUTE11 = #{attribute11,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute12 != null" >
+        ATTRIBUTE12 = #{attribute12,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute13 != null" >
+        ATTRIBUTE13 = #{attribute13,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute14 != null" >
+        ATTRIBUTE14 = #{attribute14,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute15 != null" >
+        ATTRIBUTE15 = #{attribute15,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where HEADER_ID = #{headerId,jdbcType=BIGINT}
+  </update>
   
   <delete id="deleteByHeaderId" parameterType="long">
   		delete from hap_om_order_headers where header_id = #{id}
   </delete>
+  
+  <insert id="insertByDTOSelective" useGeneratedKeys="true" parameterType="com.hand.hap.sale.dto.SaleOrderInfoDTO">  
+    <selectKey resultType="long" keyProperty="id" order="AFTER">  
+        SELECT  
+        LAST_INSERT_ID()  
+    </selectKey>  
+    insert into hap_om_order_headers (header_id,orderd_quantity,order_quantity_uom,unit_selling_price,description)   
+    values  
+   
+</insert>  
+  
+   <insert id="insertSelective2" useGeneratedKeys="true" keyProperty="headerId"  keyColumn="header_id" parameterType="com.hand.hap.sale.dto.HapOmOrderHeaders" >
+	
+    insert into hap_om_order_headers
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="headerId != null" >
+        HEADER_ID,
+      </if>
+      <if test="orderNumber != null" >
+        ORDER_NUMBER,
+      </if>
+      <if test="companyId != null" >
+        COMPANY_ID,
+      </if>
+      <if test="orderDate != null" >
+        ORDER_DATE,
+      </if>
+      <if test="orderStatus != null" >
+        ORDER_STATUS,
+      </if>
+      <if test="customerId != null" >
+        CUSTOMER_ID,
+      </if>
+      <if test="objectVersionNumber != null" >
+        OBJECT_VERSION_NUMBER,
+      </if>
+      <if test="requestId != null" >
+        REQUEST_ID,
+      </if>
+      <if test="programId != null" >
+        PROGRAM_ID,
+      </if>
+      <if test="creationDate != null" >
+        CREATION_DATE,
+      </if>
+      <if test="createdBy != null" >
+        CREATED_BY,
+      </if>
+      <if test="lastUpdatedBy != null" >
+        LAST_UPDATED_BY,
+      </if>
+      <if test="lastUpdateDate != null" >
+        LAST_UPDATE_DATE,
+      </if>
+      <if test="lastUpdateLogin != null" >
+        LAST_UPDATE_LOGIN,
+      </if>
+      <if test="attributeCategory != null" >
+        ATTRIBUTE_CATEGORY,
+      </if>
+      <if test="attribute1 != null" >
+        ATTRIBUTE1,
+      </if>
+      <if test="attribute2 != null" >
+        ATTRIBUTE2,
+      </if>
+      <if test="attribute3 != null" >
+        ATTRIBUTE3,
+      </if>
+      <if test="attribute4 != null" >
+        ATTRIBUTE4,
+      </if>
+      <if test="attribute5 != null" >
+        ATTRIBUTE5,
+      </if>
+      <if test="attribute6 != null" >
+        ATTRIBUTE6,
+      </if>
+      <if test="attribute7 != null" >
+        ATTRIBUTE7,
+      </if>
+      <if test="attribute8 != null" >
+        ATTRIBUTE8,
+      </if>
+      <if test="attribute9 != null" >
+        ATTRIBUTE9,
+      </if>
+      <if test="attribute10 != null" >
+        ATTRIBUTE10,
+      </if>
+      <if test="attribute11 != null" >
+        ATTRIBUTE11,
+      </if>
+      <if test="attribute12 != null" >
+        ATTRIBUTE12,
+      </if>
+      <if test="attribute13 != null" >
+        ATTRIBUTE13,
+      </if>
+      <if test="attribute14 != null" >
+        ATTRIBUTE14,
+      </if>
+      <if test="attribute15 != null" >
+        ATTRIBUTE15,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="headerId != null" >
+        #{headerId,jdbcType=BIGINT},
+      </if>
+      <if test="orderNumber != null" >
+        #{orderNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="companyId != null" >
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="orderDate != null" >
+        #{orderDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="customerId != null" >
+        #{customerId,jdbcType=BIGINT},
+      </if>
+      <if test="objectVersionNumber != null" >
+        #{objectVersionNumber,jdbcType=DECIMAL},
+      </if>
+      <if test="requestId != null" >
+        #{requestId,jdbcType=BIGINT},
+      </if>
+      <if test="programId != null" >
+        #{programId,jdbcType=BIGINT},
+      </if>
+      <if test="creationDate != null" >
+        #{creationDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdBy != null" >
+        #{createdBy,jdbcType=DECIMAL},
+      </if>
+      <if test="lastUpdatedBy != null" >
+        #{lastUpdatedBy,jdbcType=DECIMAL},
+      </if>
+      <if test="lastUpdateDate != null" >
+        #{lastUpdateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateLogin != null" >
+        #{lastUpdateLogin,jdbcType=DECIMAL},
+      </if>
+      <if test="attributeCategory != null" >
+        #{attributeCategory,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute1 != null" >
+        #{attribute1,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute2 != null" >
+        #{attribute2,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute3 != null" >
+        #{attribute3,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute4 != null" >
+        #{attribute4,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute5 != null" >
+        #{attribute5,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute6 != null" >
+        #{attribute6,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute7 != null" >
+        #{attribute7,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute8 != null" >
+        #{attribute8,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute9 != null" >
+        #{attribute9,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute10 != null" >
+        #{attribute10,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute11 != null" >
+        #{attribute11,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute12 != null" >
+        #{attribute12,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute13 != null" >
+        #{attribute13,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute14 != null" >
+        #{attribute14,jdbcType=VARCHAR},
+      </if>
+      <if test="attribute15 != null" >
+        #{attribute15,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
   
 </mapper>

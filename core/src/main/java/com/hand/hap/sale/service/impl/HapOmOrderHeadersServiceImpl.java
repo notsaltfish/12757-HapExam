@@ -41,7 +41,9 @@ public class HapOmOrderHeadersServiceImpl extends BaseServiceImpl<HapOmOrderHead
 			}
 			dto.setTotalMoney(totalMoney);
 		}
+		long count = hapOmOrderHeadersMapper.selectCountHeader(saleOrderInfoDTO);
 		ResponseData response = new ResponseData();
+		response.setTotal(count);
 		response.setRows(datas);
 		//response.setTotal(hapOmOrderHeadersMapper.);;
 		return response;
@@ -64,39 +66,49 @@ public class HapOmOrderHeadersServiceImpl extends BaseServiceImpl<HapOmOrderHead
 	public ResponseData updateOrSave(SaleOrderInfoDTO[] order) {
 		SaleOrderInfoDTO dto = order[0];
 		HapOmOrderHeaders header = getHeaders(dto);
+		long headerId = 0;
 		if(header.getHeaderId()!=null){
-			hapOmOrderHeadersMapper.updateByPrimaryKeySelective(header);
+			hapOmOrderHeadersMapper.updateByPrimaryKeySelective2(header);
 		}else{
 			try{
-				hapOmOrderHeadersMapper.insertSelective(header);
+			
+				hapOmOrderHeadersMapper.insertSelective2(header);
+				
 			}catch (Exception e){
 				
 			}
 		}
-		List<HapOmOrderLines> lines = getLines(dto);
-		for(HapOmOrderLines line:lines){
-			if(line.getLineId()!=null){
-				
-				hapOmOrderLineMapper.updateByPrimaryKeySelective(line);
-			}else{
-				
-				line.setLineNumber(4l);
-			
-				hapOmOrderLineMapper.insertSelective(line);
+		if(dto.getDetails()!=null){
+			dto.setHeaderId(header.getHeaderId());
+			List<HapOmOrderLines> lines = getLines(dto);
+			for(HapOmOrderLines line:lines){
+				if(line.getLineId()!=null){
+					
+					hapOmOrderLineMapper.updateByPrimaryKeySelective(line);
+				}else{
+
+					hapOmOrderLineMapper.insertSelective(line);
+				}
 			}
 		}
+		
 		ResponseData data = new ResponseData();
+		List<HapOmOrderHeaders> list = new ArrayList<HapOmOrderHeaders>();
+		list.add(header);
 		data.setSuccess(true);
+		data.setRows(list);
 		return data;
 	}
 
 	private List<HapOmOrderLines> getLines(SaleOrderInfoDTO order) {
 		List<HapOmOrderLines> lines = new ArrayList<HapOmOrderLines>();
 		List<SaleOrderDetail> details = order.getDetails();
+		long maxLineNumber = hapInvInventoryItemsMapper.selectMaxLineNumber(order.getHeaderId());
 		HapOmOrderLines line = null;
 		for(SaleOrderDetail detail:details){
 			Long itemId = hapInvInventoryItemsMapper.selectIdByCode(detail.getItemCode());
 			line = new HapOmOrderLines();
+			line.setLineNumber(maxLineNumber++);
 			line.setInventoryItemId(itemId);
 			line.setHeaderId(order.getHeaderId());
 			line.setOrderdQuantity(detail.getOrderdQuantity());
@@ -104,6 +116,11 @@ public class HapOmOrderHeadersServiceImpl extends BaseServiceImpl<HapOmOrderHead
 			line.setUnitSellingPrice(detail.getUnitSellingPrice());
 			line.setCompanyId(order.getCompanyId());
 			line.setDescription(detail.getDescription());
+			line.setAddition1(detail.getAddition1());
+			line.setAddition2(detail.getAddition2());
+			line.setAddition3(detail.getAddition3());
+			line.setAddition4(detail.getAddition4());
+			line.setAddition5(detail.getAddition5());
 			
 			line.setLineId(detail.getLineId());
 			lines.add(line);

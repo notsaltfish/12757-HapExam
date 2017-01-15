@@ -7,4 +7,6 @@ public interface HapInvInventoryItemsMapper extends Mapper<HapInvInventoryItems>
 
 	Long selectIdByCode(String string);
 
+	long selectMaxLineNumber(Long headerId);
+
 }

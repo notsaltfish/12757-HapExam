@@ -5,6 +5,11 @@
  *author:zhizheng.yang@hand-china.com
  * -->
 <#include "../include/header.html">
+<head>
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+ <meta http-equiv="expires" content="0">   
+</head>
 <body>
 <script src="${base.contextPath}/common/code?yesno=SYS.YES_NO&lovTypes=SYS.LOV_EDITOR_TYPE&alignType=SYS.ALIGN_TYPE"
         type="text/javascript"></script>
@@ -136,29 +141,30 @@
                 data: 'rows',
                 total: 'total',
                 model: {
-                   /*  id: "lovItemId",
+                    id: "headerId",
                     fields: {
-                        display: {type: "string", validation: {required: true}},
-                        gridFieldName: {type: "string", validation: {required: true}},
-                        gridFieldWidth: {type: "number", defaultValue: 200},
-                        gridField: {type: "string"},
-                        gridFieldAlign: {},
-                        conditionField: {type: "string"},
-                        gridFieldSequence: {type: "number"},
-                        conditionFieldType: {type: "string"},
-                        comboboxType: {type: "string"},
-                        conditionFieldWidth: {type: "number", defaultValue: 200},
-                        conditionFieldSequence: {type: "number", defaultValue: 1},
-                        conditionFieldName: {type: "string"},
-                        conditionFieldSelectVf: {type: "string"},
-                        conditionFieldSelectUrl: {type: "string"},
-                        conditionFieldSelectCode: {type: "string"},
-                        conditionFieldSelectTf: {type: "string"},
-                        conditionFieldTextfield: {type: "string"},
-                        conditionFieldLovCode: {type: "string"},
-                        isAutoComplete: {type: "checkbox"},
-                        autocompleteField: {type: "checkbox"} 
-                    } */
+                        itemCode:{type: "string"},
+                        orderNumber:{type: "string"},
+                        companyName:{type: "string"},
+                       // orderDate:{type: "date"},
+                        orderStatus:{type: "string"},
+                        customerName:{type: "string"},
+                        customerId:{type: "long"},
+                        lineId:{type: "long"},
+                        lineNumber:{type:"long"},
+                        inventoryItemId: {type: "long"},
+                        itemDescription: {type: "string"},
+                        orderQuantityUom: {type: "string"},
+                        orderdQuantity: {type: "long"},
+                        unitSellingPrice: {type: "long"},
+                        lineMoney: {type: "long"},
+                        description: {type: "string"},
+                        addition1: {type: "string"},
+                        addition2: {type: "string"},
+                        addition3: {type: "string"},
+                        addition4: {type: "string"},
+                        addition5: {type: "string"}
+                    }
                 }
             }
         })
@@ -178,7 +184,7 @@
 </script>
 
 <!-- 编辑界面 -->
-<form id="queryEdit" class="modal-content form-horizontal" role="form" autocomplete="off" style="display:none">
+<!-- <form id="queryEdit" class="modal-content form-horizontal" role="form" autocomplete="off" style="display:none">
     <div class="col-xs-offset-1" style="margin-top:10px">
                 <div class="form-group ">
                     <label class="col-xs-3 control-label"><@spring.message "lovitem.field_type"/></label>
@@ -272,7 +278,8 @@
     <div class="modal-footer">
         <span class="btn btn-primary" onclick="hideForm()">确定</span>
     </div>
-</form>
+</form> -->
+
 <div id="dialog"></div>
 <div id="content-container">
     <div id="page-content">
@@ -308,7 +315,7 @@
                                 <label class="col-sm-3 control-label"><@spring.message"customer.customername"/></label>
                                 <div class="col-sm-8">
                               <input id="lovCustomer"  type="text" style="width: 100%" data-bind="text:model.customerName,value:model.customerId"
-                                          >           <script>                     
+                                        required  >           <script>                     
 													/* 	  $("#lovCustomer").kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "LOV_SALE_CUSTOMER")}, 
 															    {
 															      query: function(e) { },
@@ -338,7 +345,8 @@
                                     <label class="col-sm-3 control-label"><@spring.message "sale.orderstatus"/></label>
                                     <div class="col-sm-8">
                                  <select data-role="combobox" data-value-primitive="true"
-                                                data-text-field="meaning" data-value-field="value"
+                                 				id="orderStatus" 
+                                                data-text-field="meaning" readonly="readonly" data-value-field="value"
                                                 data-bind="source: requestStatusData,value:model.orderStatus" style="width: 100%;"></select>
                                           </div>
                                 </div>
@@ -351,7 +359,7 @@
                                     <div class="col-sm-8">
                                        <input style="width: 100%" id="totalMoney"  readonly="readonly" data-bind="value:model.totalMoney" class="k-textbox">
                                      <script>                     
-															
+                                     					kendo.bind($('#orderStatus'), viewModel)
 															kendo.bind($("#totalMoney"),viewModel);
 													</script>
                                     </div>
@@ -361,7 +369,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label"><@spring.message "sale.ordernumber"/></label>
                                     <div class="col-sm-8">
-                                           <input style="width: 100%"  id="form_orderNumber"  data-bind="value:model.orderNumber" class="k-textbox">  
+                                           <input style="width: 100%" required id="form_orderNumber"  data-bind="value:model.orderNumber" class="k-textbox">  
                 
                                                  </div>
                                 </div>
@@ -370,8 +378,8 @@
                             		<div class="form-group">
                           <label class="col-sm-3 control-label"><@spring.message "sale.saledate"/></label>
                           <div class="col-sm-8">
-                              <input id="placeholder" data-role="datepicker" type="text" style="width: 100%;" data-bind="value:model.orderDate">
-                              <script>kendo.bind($('#placeholder'), viewModel);</script>
+                              <input id="orderdate" required data-role="datepicker" type="text" style="width: 100%;" data-bind="value:model.orderDate">
+                              <script>kendo.bind($('#orderdate'), viewModel);</script>
                           </div>
                       </div>
                             
@@ -383,21 +391,74 @@
                 <div class="row">
                     <div class="col-sm-6">
                       <span class="btn btn-default" 
-                            onclick="newOrder()"><@spring.message "hap.save"/></span>
+                            onclick="save()" id="op_save" ><@spring.message "hap.save"/></span>
                            <span class="btn btn-primary" data-bind="click:queryResource"
-                                 type="submit"><@spring.message "hap.submit"/></span>
-                        <span class="btn btn-default" type="button" data-bind="click:resetForm"><@spring.message "hap.check"/></span>
+                                 onclick="submit()"  id="op_submit" ><@spring.message "hap.submit"/></span>
+                        <span class="btn btn-default" type="button" id="op_check" onclick="check()" ><@spring.message "hap.check"/></span>
                         <span class="btn btn-primary" 
-                            data-bind="click:exportExcelFunction"><@spring.message "hap.refuse"/></span>
-						
+                            onclick="refuse()" id="op_refuse" ><@spring.message "hap.refuse"/></span>
+				
 						<span class="btn btn-primary" 
-                            onclick="orderDelete()">整单删除</span>
+                            onclick="orderDelete()"  id="op_delete" >整单删除</span>
 					<span class="btn btn-primary" 
-                            data-bind="click:exportExcelFunction">单据打印</span>
-					<span class="btn btn-primary" 
-                            data-bind="click:exportExcelFunction">返回</span>
+                            onclick="orderPrint()"  id="op_print">单据打印</span>
+					<span class="btn btn-primary"  onclick="back()">返回</span>
 					
 							<script type="text/javascript">
+								function save(){
+									var status = viewModel.model.orderStatus;
+									if(status!="NEW"&&status!="REJECTED"){
+										return showMessage();
+									}
+									saveLov();
+								}
+							
+								function check(){
+									var status = viewModel.model.orderStatus;
+									if(status!="SUBMITED"){
+										return showMessage();
+									}
+									
+									viewModel.model.set("orderStatus","APPROVED");
+									saveLov();
+									
+								}
+							
+								function submit(){
+									var newNow = viewModel.model.NewNow;
+									var status = viewModel.model.orderStatus;
+									if(newNow==true||(status!="NEW"&&status!="REJECTED")){
+										return showMessage();
+									}
+									viewModel.model.set("orderStatus","SUBMITED");
+									saveLov();
+									
+								}
+								
+							
+								 function refuse(){
+									 var status = viewModel.model.orderStatus;
+										if(status!="SUBMITED"){
+											return showMessage();
+										}
+										viewModel.model.set("orderStatus","REJECTED");
+										saveLov();
+								 }
+								 
+							 function orderPrint(){
+								 
+									}
+							 
+							 function showMessage(){
+								 kendo.ui.showInfoDialog({
+					                 message: '当前状态不可进行此操作'
+					             });
+							 }
+								 
+								function back(){
+									window.location.href="/sale/saleorder.html"; 
+								}
+							
 								function excelExport(){
 									//console.log(viewModel.model);
 									//console.log(viewModel.model.get("orderStatus"))
@@ -412,6 +473,11 @@
 								}
 							
 								function orderDelete(){
+									var newNow = viewModel.model.NewNow;
+									if(newNow==true||(viewModel.model.orderStatus!="NEW"&&viewModel.model.orderStatus!="REJECTED")){
+										
+										return showMessage();
+									}
 								    kendo.ui.showConfirmDialog({
 							            title:$l('hap.tip.info'),
 							            message: $l('hap.tip.delete_confirm')
@@ -439,39 +505,85 @@
                 </div>
             </div>
          <script>kendo.bind($('#inQuery'), viewModel);</script>
-        
-        
-        <div id='grid-container'>
-            <div id="grid" style="clear: both"></div>
-        </div>
     </div>
+    <div id="tabstrip">
+		        <ul>
+		            <li id="gridtab"><@spring.message "sale.order.main"/></li>
+		            <li id="othergridtab"><@spring.message "sale.order.other"/></li>
+		        </ul>
+			        <div id='grid-container'>
+			            <div id="grid" style="clear: both"></div>
+			        </div>
+			          <div id='grid-container'>
+			        	  <div id="othergrid" style="clear: both"></div>
+			         </div>
+        </div>
 </div>
 
 <script id="openEdit" type="text/x-kendo-template">
            
 </script>
 <script type="text/javascript">
+//两个标签页
+var tabToActivate = $("#gridtab");
+var tabstrip =  $("#tabstrip").kendoTabStrip({
+            animation: {
+                close: {
+                    duration: 200,
+                    effects: "fadeOut"
+                },
+                open: {
+                    duration: 200,
+                    effects: "fadeIn"
+                }
+            },
+            show:function(e){
+                if(e.item.id == "gridtab"){
+                    Hap.autoResizeGrid("#grid");
+                }else if(e.item.id=="othergridtab"){
+                    Hap.autoResizeGrid("#othergrid");
+                }
+            }
+
+        }
+		).data("kendoTabStrip");
+		tabstrip.activateTab(tabToActivate);
+
+
+
+
+
+
+
     $('#page-content form:first input').keydown(function (e) {
         if (e.keyCode == 13) {
             e.target.blur();
             viewModel.queryResource(e);
         }
     });
-    $("#code").kendoValidator({
+    $("#lovCompany").kendoValidator({
         messages: {
             required: "required"
         },
         errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
 
     });
-    $("#valueField").kendoValidator({
+    $("#lovCustomer").kendoValidator({
         messages: {
             required: "required"
         },
         errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
 
     });
-    $("#textField").kendoValidator({
+    $("#form_orderNumber").kendoValidator({
+        messages: {
+            required: "required"
+        },
+        errorTemplate: '<div class="k-widget k-tooltip k-tooltip-validation k-invalid-msg" style="margin: 0.5em; display: block;" role="alert"><span class="k-icon k-warning"> </span>#=message#<div class="k-callout k-callout-n"></div></div>'
+
+    });
+    
+    $("#orderdate").kendoValidator({
         messages: {
             required: "required"
         },
@@ -517,6 +629,9 @@
                 field: "itemCode",
                 title: '<@spring.message "sale.item.itemcode"/>',
                 width: 80,
+                template: function (dataItem) {
+                    return dataItem['itemCode'] || ''
+                },
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
@@ -525,9 +640,15 @@
                 editor: function (container, options) {
                     $('<input name="' + options.field + '"/>')
                             .appendTo(container)
-                            .kendoLov($.extend(<@lov "LOV_SALE_INVENTORY_ITEMSCODE"/>, {
-                                textField: 'itemCode',
-                                model: options.model
+                            .kendoLov($.extend(${lovProvider.getLov(base.contextPath, base.locale, "LOV_SALE_INVENTORY_ITEMSCODE")}, {
+                              /*   textField: 'itemCode',
+                                model: options.model, */
+                                select:  function(e){
+                                    options.model.set('itemDescription', e.item.itemDescription);
+                                    options.model.set('orderQuantityUom', e.item.itemUom);
+                                    options.model.set('inventoryItemId', e.item.inventoryItemId);
+                         
+                                }                            
                             }));
                 }
                 
@@ -539,28 +660,34 @@
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
+                },
+                editor: function (container, options) {
+                    $('<input required data-required-msg="产品描述不能为空!" name="' + options.field + '" readonly/>')
+                        .appendTo(container)
+                        .kendoMaskedTextBox({
+                        	 caseLetter: "upper"
+
+                        });
                 }
             },
             {
                 field: "orderQuantityUom",
                 title: '<@spring.message "sale.product.uom"/>',
                 width: 70,
-                attributes: {style: "text-align:right"},
-                headerAttributes: {
-                    "class": "table-header-cell",
-                    style: "text-align: center"
-                }
-            },
-           /*  {
-                width: 60,
+                attributes: {style: "text-align:center"},
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
                 },
-                attributes: {style: "text-align:center"},
-                title: '<@spring.message "lovitem.gridcolumn"/>',
-                template: '<input type="checkbox" #=gridField=="Y" ? \'checked="checked"\':""# class="gridCheckbox"  name="gridField"/>'
-            }, */
+                editor: function (container, options) {
+                    $('<input readonly required data-required-msg="产品单位不能为空!" name="' + options.field + '" />')
+                        .appendTo(container)
+                        .kendoMaskedTextBox({
+                     
+
+                        });
+                }
+            },
             {
                 field: "orderdQuantity",
                 title: '<@spring.message "sale.order.quantity"/>',
@@ -569,38 +696,23 @@
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
-                }
-               /*  template: function (dataItem) {
-                    var v = dataItem.gridFieldAlign;
-                    $.each(alignType, function (i, n) {
-                        if ((n.value || '').toLowerCase() == (v || '').toLowerCase()) {
-                            v = n.meaning;
-                            return false;
-                        }
-                    })
-                    return v || '';
                 },
-                editor: function (container, options) {
-                    $('<input name="' + options.field + '"/>').appendTo(container)
-                            .kendoDropDownList(
-                                    {
-                                        dataTextField: "meaning",
-                                        dataValueField: "value",
-                                        valuePrimitive: true,
-                                        dataSource: alignType
-                                    });
-                } */
+                editor  : function (container, options) {
+                    $('<input required name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            min:0,
+                            step: 1,
+                            change: function() {
+                                options.model.set('lineMoney', options.model.unitSellingPrice*options.model.orderdQuantity);
+                            }
+
+                        });
+                }
+
+               
             },
-		       /*      {
-		                width: 80,
-		                headerAttributes: {
-		                    "class": "table-header-cell",
-		                    style: "text-align: center"
-		                },
-		                attributes: {style: "text-align:center"},
-		                title: '<@spring.message "lovitem.conditionfield"/>',
-		                template: '<input type="checkbox" class="gridCheckbox" #=conditionField=="Y" ? \'checked="checked"\':""# id="conditionField"  name="conditionField"/>'
-		            }, */
+		
             {
                 field: "unitSellingPrice",
                 title: '<@spring.message "sale.price"/>',
@@ -609,17 +721,38 @@
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
+                },
+                editor  : function (container, options) {
+                    $('<input required name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            min:0,
+                            step: 1,
+                            change: function() {
+                                options.model.set('lineMoney', options.model.unitSellingPrice*options.model.orderdQuantity);
+                            }
+
+                        });
                 }
             },
             {
                 field: "lineMoney",
                 title: '<@spring.message "sale.product.money"/>',
                 width: 60,
+				
                 attributes: {style: "text-align:right"},
                 headerAttributes: {
                     "class": "table-header-cell",
                     style: "text-align: center"
+                },
+                editor: function (container, options) {
+                    $('<input required data-required-msg="金额不能为空!" name="' + options.field + '"/>')
+                        .appendTo(container)
+                        .kendoNumericTextBox({
+                            spinners: false,
+                        }).data("kendoNumericTextBox").readonly();;
                 }
+
             }, 
             {
                 field: "description",
@@ -631,34 +764,15 @@
                     style: "text-align: center"
                 }
             }
-            
-            /* {
-                // field           : "type",
-                title: '<@spring.message "lovitem.type"/>',
-                width: 80,
-                headerAttributes: {
-                    "class": "table-header-cell",
-                    style: "text-align: center"
-                },
-                attributes: {style: "text-align:center"},
-                template: function (e) {
-                    if (e.conditionField == 'Y') {
-                        return '<a href="javascript:void(0)" id="lovItemType"   onclick="openEditor(this)"><@spring.message "lovitem.type"/></a>'
-                    }
-                    return '';
-                }
-            } */
         ],
+        attributes: {style: "text-align:center"},
         editable: true,
         dataBound: function (e) {
             var view = this.dataSource.view();
             this.items().each(function (index, row) {
                 kendo.bind(row, view[index]);
             });
-            var row = this.tbody.find(">tr[data-uid=" + viewModel2.selected.uid + "]");
-            if (row) {
-                this.select(row);
-            }
+            
         },
         change: function (e) {
             var model = this.dataItem(this.select());
@@ -666,6 +780,101 @@
         }
     }).data("kendoGrid");
 
+
+    
+    var othergrid = $("#othergrid").kendoGrid({
+        dataSource: viewModel2.dataSource,
+        navigatable: false,
+        height: '100%',
+        resizable: true,
+        scrollable: true,
+        rownumber: true,
+        toolbar: [
+            {
+                name: "create",
+                template: '<span class="btn btn-primary k-grid-add"><@spring.message "hap.new"/></span>'
+            }, {
+                name: "save",
+                template: '<span class="btn btn-success" onclick="saveLov()"><@spring.message "hap.save"/></span>'
+            }, {
+                template: '<span  onclick="deleteData()"  class="btn btn-danger"><@spring.message "hap.delete"/></span>'
+            }
+        ],
+        columns: [
+            {
+                headerTemplate: "<input id='headCheckbox' type='checkbox' onclick='toggleAll(event)' tabindex='-1'/>",
+                template: '<input class="checkbox hCheckbox" type="checkbox" data-bind="checked: checked" tabindex="-1"/>',
+                width: 30
+            },
+            {
+                field: "addition1",
+                title: '<@spring.message "sale.order.addition1"/>',
+                width: 80,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+              	  }
+                },
+            {
+                field: "addition2",
+                title: '<@spring.message "sale.order.addition2"/>',
+                width: 100,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                }
+            },
+            {
+                field: "addition3",
+                title: '<@spring.message "sale.order.addition3"/>',
+                width: 70,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                }
+            },
+      
+            {
+                field: "addition4",
+                title: '<@spring.message "sale.order.addition4"/>',
+                width: 80,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                }
+            },
+            {
+                field: "addition5",
+                title: '<@spring.message "sale.order.addition5"/>',
+                width: 60,
+                attributes: {style: "text-align:center"},
+                headerAttributes: {
+                    "class": "table-header-cell",
+                    style: "text-align: center"
+                }
+            },
+    
+        ],
+        editable: true,
+        dataBound: function (e) {
+            var view = this.dataSource.view();
+            this.items().each(function (index, row) {
+                kendo.bind(row, view[index]);
+            });
+         
+        },
+        change: function (e) {
+            var model = this.dataItem(this.select());
+            viewModel2.set("selected", model);
+        }
+    }).data("kendoGrid");
+    
+
+    
     $("#grid").data("kendoGrid").one("dataBound", function (e) {
         this.select(this.tbody.find(">tr:first"));
     });
@@ -815,9 +1024,9 @@
     
     if (${RequestParameters.isedit!0}== '1')
     {
-    	$("#form_orderNumber").attr("readonly","readonly");
+    	
         $.ajax({
-            url: '${base.contextPath}/orderheader/getorderinfo?headerId=${RequestParameters.headerId!0}',
+            url: '${base.contextPath}/orderheader/getorderheader?headerId=${RequestParameters.headerId!0}',
 	         type: "POST",
             dataType: "json",
             contentType: "application/json",
@@ -827,36 +1036,55 @@
                 var a0 = args.rows[0] || {};
                 var defaultSqlType = 0;
                 for (var k in a0) {
-                    if(k=='orderStatus'){
+                  /*   if(k=='orderStatus'){
                         if(a0[k]==""){
                             defaultSqlType = 1;
                         }else{
                             defaultSqlType=0;
                         }
-                    }
-                    if (k == 'delayLoad' || k == 'needQueryParam' || k == 'editableFlag') {
+                    } */
+                   /*  if (k == 'delayLoad' || k == 'needQueryParam' || k == 'editableFlag') {
                         var elementId = k;
                         viewModel.model.set(k, a0[k] == 'Y');
                         if(viewModel.model.get(k)){
                             $("#"+k).attr("checked",true);
                         }
-                    }
-                    else
+                    } 
+                    else*/
                         viewModel.model.set(k, a0[k]);
                 }
+                
+                viewModel.model.set("NewNow",false);
+               
+                
                 //生成sqlType的select下拉框
-                getSqlTypeSelect(defaultSqlType);
+                //getSqlTypeSelect(defaultSqlType);
             },
             error: function () {
 
             }
         });
-
+        
+        var orderStatus = viewModel.model.orderStatus;
+        if(orderStatus=="SUBMITED"){
+        	//$('input,select,textarea',$('#myForm')).prop('readonly',true);
+        	$("#myForm input,textarea").attr("disabled","disabled");
+        }else if(orderStatus=="APPROVED"){
+        	$("#myForm input,textarea").attr("disabled","disabled");
+        }
+        
     }else{
-        var defaultSqlType = 0;
-        getSqlTypeSelect(defaultSqlType);
+    	viewModel.model.set("orderDate", new Date())
+    	viewModel.model.set("orderStatus","NEW");
+    	viewModel.model.set("NewNow",true);
+    	$("#op_delete").attr("disabled","disabled");
+		$("#op_submit").attr("disabled","disabled");
+		$("#op_print").attr("disabled","disabled");
+		$("#op_check").attr("disabled","disabled");
+		$("#op_refuse").attr("disabled","disabled");
     }
-
+    
+    //authority();
     //处理form中的选择框
 
 
@@ -873,18 +1101,20 @@
         }
     });
     function saveLov() {
-       /*  var sqlType = $("#sqlType").val();
-        var sql = ""; 
-        if(sqlType=="<@spring.message 'lov.sqlId'/>"){
-           sql = $("#sqlId").val();
-           viewModel.model.set("customSql","");
-        }else{
-            sql = $("#customSql").val();
-            viewModel.model.set("sqlId","");
-        }
-        if(sql==""){
-            alert("error");
-        }else{ */
+      	var companyId = viewModel.model.companyId;
+      	console.log(viewModel);
+      	var customerId = viewModel.model.customerId;
+      	var orderDate = viewModel.model.orderDate;
+      	var orderNumber =  viewModel.model.orderNumber;
+      	
+      	if(!companyId||!customerId||!orderDate||!orderNumber){
+      	     kendo.ui.showInfoDialog({
+                 message: '数据输入不完整'
+                 
+             });
+      	     return;
+      	}
+     
             
           //保存所有数据
             //处理表单的单选框
@@ -902,20 +1132,55 @@
                 	details: $('#grid')
                 },
                 success: function (result) {
-                	
+                	viewModel.model.headerId = result.rows[0].headerId;
                 }
             });
-        kendo.ui.showInfoDialog({
-            message: '操作成功！!'
-        });
+            kendo.ui.showConfirmDialog({
+	            title:$l('hap.tip.info'),
+	            message: "操作成功"
+	        }).done(function (event) {
+	            if (event.button == 'OK') {
+	            	
+	         	back();
+	         	}
+	            
+	            })
+       // back();}
     }
     
 
+	function authority(){
+		var status = viewModel.model.orderStatus;
+		if(status=="NEW"){
+			$("#op_delete").css("display","inline");
+			$("#op_submit").css("display","inline");
+			$("#op_save").css("display","inline");
+			
+		//	op_delete  op_refuse op_check op_submit op_save
+		}else if(status=="APPROVED"){
+			
+		}else if(status=="SUBMITED"){
+
+			
+			$("#op_check").css("display","inline");
+			$("#op_refuse").css("display","inline");
+			$("#op_delete").css("display","inline");
+		}
+		else if(status=="REJECTED"){
+			$("#op_delete").css("display","inline");
+			$("#op_submit").css("display","inline");
+			$("#op_save").css("display","inline");
+		}
+
+	
+	}
+	
+	
 </script>
 <style>
     .formCheckbox {
         height: 27px
     }
-</style>
+</style
 </body>
 </html>
